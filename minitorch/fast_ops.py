@@ -30,6 +30,18 @@ Fn = TypeVar("Fn")
 
 
 def njit(fn: Fn, **kwargs: Any) -> Fn:
+    """JIT compile a function using Numba with the given arguments.
+
+    Args:
+    ----
+        fn: The function to be JIT compiled.
+        **kwargs: Additional keyword arguments to pass to Numba's njit.
+
+    Returns:
+    -------
+        The JIT compiled function.
+
+    """
     return _njit(inline="always", **kwargs)(fn)  # type: ignore
 
 
@@ -159,6 +171,7 @@ def tensor_map(
         Tensor map function.
 
     """
+
     def _map(
         out: Storage,
         out_shape: Shape,
@@ -279,7 +292,7 @@ def tensor_reduce(
         reduce_dim: int,
     ) -> None:
         # TODO: Implement for Task 3.1.
-        
+
         out_size: int = len(out)
         reduce_size: int = a_shape[reduce_dim]
         for ordinal in prange(out_size):
@@ -290,9 +303,10 @@ def tensor_reduce(
             for j in range(reduce_size):
                 reduced_val = fn(
                     reduced_val,
-                    a_storage[a_ordinal + j * a_strides[reduce_dim]],
+                    float(a_storage[a_ordinal + j * a_strides[reduce_dim]]),
                 )
             out[ordinal] = reduced_val
+
     return njit(_reduce, parallel=True)  # type: ignore
 
 
@@ -348,7 +362,7 @@ def _tensor_matrix_multiply(
     for n in prange(N):
         for i in prange(I):
             for j in prange(J):
-                sum_val= 0.0
+                sum_val = 0.0
                 a_ordinal = n * a_batch_stride + i * a_strides[-2]
                 b_ordinal = n * b_batch_stride + j * b_strides[-1]
                 for _ in range(K):

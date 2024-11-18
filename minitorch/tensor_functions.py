@@ -132,12 +132,14 @@ class Mul(Function):
 class Sigmoid(Function):
     @staticmethod
     def forward(ctx: Context, t1: Tensor) -> Tensor:
+        """Forward function for Sigmoid"""
         sigmoid: Tensor = t1.f.sigmoid_map(t1)
         ctx.save_for_backward(sigmoid)
         return sigmoid
 
     @staticmethod
     def backward(ctx: Context, grad_output: Tensor) -> Tensor:
+        """Backward function for Sigmoid"""
         sigmoid: Tensor = ctx.saved_values[0]
         return sigmoid * (-sigmoid + 1.0) * grad_output
 
