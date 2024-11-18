@@ -464,7 +464,49 @@ def _tensor_matrix_multiply(
     #    b) Copy into shared memory for b matrix
     #    c) Compute the dot produce for position c[i, j]
     # TODO: Implement for Task 3.4.
-    raise NotImplementedError("Need to implement for Task 3.4")
+    # Matrix dimensions
+    I, J, K = out_shape[1], out_shape[2], a_shape[-1]
+
+    # Accumulator for dot product
+    acc = 0.0
+    
+    # Iterate over shared dimension in blocks
+    for start in range(0, K, BLOCK_DIM):
+        # Compute indices for copying into shared memory
+        a_k = start + pj
+        b_k = start + pi
+
+        # Load a[i, start + pj] into shared memory
+        if i < I and a_k < K:
+            a_shared[pi, pj] = a_storage[
+                batch * a_batch_stride + i * a_strides[1] + a_k * a_strides[2]
+            ]
+        else:
+            a_shared[pi, pj] = 0.0
+
+        # Load b[start + pi, j] into shared memory
+        if b_k < K and j < J:
+            b_shared[pi, pj] = b_storage[
+                batch * b_batch_stride + b_k * b_strides[1] + j * b_strides[2]
+            ]
+        else:
+            b_shared[pi, pj] = 0.0
+        
+            
+        # Synchronize threads after copying to the shared memory
+        cuda.syncthreads()
+        
+        # Compute dot product for this block and accumulate
+        for k in range(BLOCK_DIM):
+            if start + k < K:
+                acc += a_shared[pi, k] * b_shared[k, pj]
+        
+        # Synchronize before moving to the next block
+        cuda.syncthreads()
+    
+    # Write the result to global memory if within bounds
+    if i < I and j < J:
+        out[batch * out_strides[0] + i * out_strides[1] + j * out_strides[2]] = acc
 
 
 tensor_matrix_multiply = jit(_tensor_matrix_multiply)
