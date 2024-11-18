@@ -245,7 +245,6 @@ def tensor_zip(
             for i in prange(out_size):
                 out[i] = fn(a_storage[i], b_storage[i])
         else:
-            
             for ordinal in prange(out_size):
                 out_index: Index = np.empty(MAX_DIMS, dtype=np.int32)
                 a_index: Index = np.empty(MAX_DIMS, dtype=np.int32)
