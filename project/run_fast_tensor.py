@@ -46,7 +46,7 @@ class Linear(minitorch.Module):
 
     def forward(self, x):
         # TODO: Implement for Task 3.5.
-        return self.weights.value @ x + self.bias.value.view(self.out_size, 1)
+        return x @ self.weights.value + self.bias.value
 
 
 class FastTrain:
