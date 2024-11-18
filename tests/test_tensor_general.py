@@ -6,7 +6,6 @@ import numba.cuda
 import pytest
 from hypothesis import given, settings
 from hypothesis.strategies import DataObject, data, integers, lists, permutations
-
 import minitorch
 from minitorch import MathTestVariable, Tensor, TensorBackend, grad_check
 
