@@ -42,12 +42,12 @@ def njit(fn: Fn, **kwargs: Any) -> Fn:
         The JIT compiled function.
 
     """
-    return _njit(inline="always", **kwargs)(fn)  # type: ignore
+    return _njit(**kwargs)(fn)  # type: ignore
 
 
-to_index = njit(to_index)
-index_to_position = njit(index_to_position)
-broadcast_index = njit(broadcast_index)
+to_index = njit(to_index, inline="always")
+index_to_position = njit(index_to_position, inline="always")
+broadcast_index = njit(broadcast_index, inline="always")
 
 
 class FastOps(TensorOps):
@@ -185,8 +185,8 @@ def tensor_map(
         if np.array_equal(out_strides, in_strides) and np.array_equal(
             out_shape, in_shape
         ):
-            for i in prange(out_size):
-                out[i] = fn(in_storage[i])
+            for ordinal in prange(out_size):
+                out[ordinal] = fn(in_storage[ordinal])
         else:
             for ordinal in prange(out_size):
                 in_index: Index = np.zeros(MAX_DIMS, dtype=np.int32)
