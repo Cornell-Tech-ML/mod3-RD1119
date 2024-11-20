@@ -1,6 +1,7 @@
 import minitorch
 import time
 import numpy as np
+import matplotlib.pyplot as plt
 
 FastTensorBackend = minitorch.TensorBackend(minitorch.FastOps)
 GPUBackend = minitorch.TensorBackend(minitorch.CudaOps)
@@ -29,7 +30,10 @@ if __name__ == "__main__":
 
     ntrials = 3
     times = {}
-    for size in [64, 128, 256, 512, 1024]:
+    fast_times_res = []
+    gpu_times_res = []
+    sizes = [64, 128, 256, 512, 1024]
+    for size in sizes:
         print(f"Running size {size}")
         times[size] = {}
         simple_times = []
@@ -52,6 +56,8 @@ if __name__ == "__main__":
 
         times[size]["fast"] = np.mean(fast_times)
         times[size]["gpu"] = np.mean(gpu_times)
+        fast_times_res.append(np.mean(fast_times))
+        gpu_times_res.append(np.mean(gpu_times))
         print(times[size])
 
     print()
@@ -60,3 +66,12 @@ if __name__ == "__main__":
         print(f"Size: {size}")
         for b, t in stimes.items():
             print(f"    {b}: {t:.5f}")
+    
+    plt.plot(sizes, fast_times_res, label='FastOps', marker='o', color='blue')
+    plt.plot(sizes, gpu_times_res, label='CudaOps', marker='x', color='red')
+    plt.xlabel('Matrix Size (n x n)')
+    plt.ylabel('Execution Time (s)')
+    plt.title('Comparison of Matrix Multiplication Execution Time')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
