@@ -384,6 +384,14 @@ No allocation hoisting found
 None
 ```
 # Task 4
+
+| Size| FastOps Time (s) | CudaOps Time (s) |
+|----------------------|------------------|------------------|
+| 64                   | 0.02312         | 0.02335         |
+| 128                  | 0.05791         | 0.04449         |
+| 256                  | 0.30489         | 0.18598         |
+| 512                  | 1.12996         | 0.22937         |
+| 1024                 | 9.40424         | 1.03345         |
 The graph for the comparation between Cuda Implementation and naive operations.
 ![task4-result](./Graph/Task4.png)
 
