@@ -67,11 +67,5 @@ if __name__ == "__main__":
         for b, t in stimes.items():
             print(f"    {b}: {t:.5f}")
     
-    plt.plot(sizes, fast_times_res, label='FastOps', marker='o', color='blue')
-    plt.plot(sizes, gpu_times_res, label='CudaOps', marker='x', color='red')
-    plt.xlabel('Matrix Size (n x n)')
-    plt.ylabel('Execution Time (s)')
-    plt.title('Comparison of Matrix Multiplication Execution Time')
-    plt.legend()
-    plt.grid(True)
-    plt.show()
+    print("Fast_times", fast_times_res)
+    print("gpu_times", gpu_times_res)
