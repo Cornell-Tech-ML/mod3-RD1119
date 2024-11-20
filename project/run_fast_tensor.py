@@ -91,7 +91,7 @@ class FastTrain:
             time_epoch = time.time() - start_time
             total_time += time_epoch
             losses.append(total_loss)
-            
+
             # Logging
             if epoch % 10 == 0 or epoch == max_epochs:
                 time_per_epoch = total_time / 10
