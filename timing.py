@@ -1,7 +1,6 @@
 import minitorch
 import time
 import numpy as np
-import matplotlib.pyplot as plt
 
 FastTensorBackend = minitorch.TensorBackend(minitorch.FastOps)
 GPUBackend = minitorch.TensorBackend(minitorch.CudaOps)
@@ -66,6 +65,6 @@ if __name__ == "__main__":
         print(f"Size: {size}")
         for b, t in stimes.items():
             print(f"    {b}: {t:.5f}")
-    
+
     print("Fast_times", fast_times_res)
     print("gpu_times", gpu_times_res)
