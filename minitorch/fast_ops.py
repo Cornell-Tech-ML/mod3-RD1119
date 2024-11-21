@@ -237,13 +237,13 @@ def tensor_zip(
         # TODO: Implement for Task 3.1.
         out_size = len(out)
         if (
-            np.array_equal(out_strides, a_strides)
-            and np.array_equal(out_strides, b_strides)
+            np.array_equal(out_shape, b_shape)
             and np.array_equal(out_shape, a_shape)
-            and np.array_equal(out_shape, b_shape)
+            and np.array_equal(out_strides, a_strides)
+            and np.array_equal(out_strides, b_strides)
         ):
-            for i in prange(out_size):
-                out[i] = fn(a_storage[i], b_storage[i])
+            for ordinal in prange(out_size):
+                out[ordinal] = fn(a_storage[ordinal], b_storage[ordinal])
         else:
             for ordinal in prange(out_size):
                 out_index: Index = np.empty(MAX_DIMS, dtype=np.int32)
@@ -362,17 +362,17 @@ def _tensor_matrix_multiply(
     for i in prange(I):
         for j in prange(J):
             for k in prange(K):
-                sum_val = 0.0
-                a_ordinal = i * a_batch_stride + j * a_strides[-2]
-                b_ordinal = i * b_batch_stride + k * b_strides[-1]
+                val = 0.0
+                a_ordinal = a_batch_stride * i + a_strides[-2] * j
+                b_ordinal = b_batch_stride * i + b_strides[-1] * k
                 for _ in range(N):
-                    sum_val += a_storage[a_ordinal] * b_storage[b_ordinal]  # 1 multiply
+                    val += a_storage[a_ordinal] * b_storage[b_ordinal]
                     a_ordinal += a_strides[-1]
                     b_ordinal += b_strides[-2]
                 out_ordinal = (
-                    i * out_strides[-3] + j * out_strides[-2] + k * out_strides[-1]
+                    out_strides[-1] * k + out_strides[-2] * j + out_strides[-3] * i
                 )
-                out[out_ordinal] = sum_val
+                out[out_ordinal] = val
 
 
 tensor_matrix_multiply = njit(_tensor_matrix_multiply, parallel=True)

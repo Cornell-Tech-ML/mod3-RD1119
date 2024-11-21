@@ -287,13 +287,12 @@ def _sum_practice(out: Storage, a: Storage, size: int) -> None:
     if i < size:
         a = 2
         for _ in range(5):
-            if (pos % a) == 0:
+            if pos % a == 0:
                 cache[pos] += cache[pos + int(a / 2)]
                 cuda.syncthreads()
             a *= 2
         if pos == 0:
-            y = cuda.blockIdx.x
-            out[y] = cache[0]
+            out[pos] = cache[0]
 
 
 jit_sum_practice = cuda.jit()(_sum_practice)
@@ -413,18 +412,17 @@ def _mm_practice(out: Storage, a: Storage, b: Storage, size: int) -> None:
     # TODO: Implement for Task 3.3.
     shared_a = cuda.shared.array((BLOCK_DIM, BLOCK_DIM), numba.float64)
     shared_b = cuda.shared.array((BLOCK_DIM, BLOCK_DIM), numba.float64)
-
-    x_val = cuda.threadIdx.x
-    y_val = cuda.threadIdx.y
-    if x_val < size and y_val < size:
-        loc = size * x_val + y_val
-        shared_a[x_val, y_val] = a[loc]
-        shared_b[x_val, y_val] = b[loc]
+    x = cuda.threadIdx.x
+    y = cuda.threadIdx.y
+    if x < size and y < size:
+        loc = size * x + y
+        shared_a[x, y] = a[loc]
+        shared_b[x, y] = b[loc]
         cuda.syncthreads()
         output = 0.0
         for i in range(size):
-            output += shared_a[x_val, i] * shared_b[i, y_val]
-        out[size * x_val + y_val] = output
+            output += shared_a[x, i] * shared_b[i, y]
+        out[loc] = output
 
 
 jit_mm_practice = jit(_mm_practice)
@@ -516,21 +514,21 @@ def _tensor_matrix_multiply(
     # Iterate over shared dimension in blocks
     for start in range(0, K, BLOCK_DIM):
         # Compute indices for copying into shared memory
-        a_k = start + pj
-        b_k = start + pi
+        ka = start + pj
+        kb = start + pi
 
         # Load a[i, start + pj] into shared memory
-        if i < I and a_k < K:
+        if i < I and ka < K:
             a_shared[pi, pj] = a_storage[
-                batch * a_batch_stride + i * a_strides[1] + a_k * a_strides[2]
+                batch * a_batch_stride + i * a_strides[1] + ka * a_strides[2]
             ]
         else:
             a_shared[pi, pj] = 0.0
 
         # Load b[start + pi, j] into shared memory
-        if b_k < K and j < J:
+        if j < J and kb < K:
             b_shared[pi, pj] = b_storage[
-                batch * b_batch_stride + b_k * b_strides[1] + j * b_strides[2]
+                batch * b_batch_stride + kb * b_strides[1] + j * b_strides[2]
             ]
         else:
             b_shared[pi, pj] = 0.0
@@ -548,7 +546,7 @@ def _tensor_matrix_multiply(
 
     # Write the result to global memory if within bounds
     if i < I and j < J:
-        out[batch * out_strides[0] + i * out_strides[1] + j * out_strides[2]] = acc
+        out[out_strides[0] * batch + out_strides[1] * i + out_strides[2] * j] = acc
 
 
 tensor_matrix_multiply = jit(_tensor_matrix_multiply)
