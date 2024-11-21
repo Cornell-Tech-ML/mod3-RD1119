@@ -410,18 +410,24 @@ def _mm_practice(out: Storage, a: Storage, b: Storage, size: int) -> None:
     """
     BLOCK_DIM = 32
     # TODO: Implement for Task 3.3.
+    # Define shared memory arrays for input matrices `a` and `b`
     shared_a = cuda.shared.array((BLOCK_DIM, BLOCK_DIM), numba.float64)
     shared_b = cuda.shared.array((BLOCK_DIM, BLOCK_DIM), numba.float64)
+    # Get the thread indices within the block
     x = cuda.threadIdx.x
     y = cuda.threadIdx.y
+    # Load data into shared memory if within bounds
     if x < size and y < size:
-        loc = size * x + y
-        shared_a[x, y] = a[loc]
-        shared_b[x, y] = b[loc]
+        loc = size * x + y  # Compute the linear index in 1D array representation
+        shared_a[x, y] = a[loc]  # Load from global memory to shared memory
+        shared_b[x, y] = b[loc]  # Load from global memory to shared memory
+        # Synchronize threads after copying to the shared memory
         cuda.syncthreads()
+        # Perform matrix multiplication using shared memory
         output = 0.0
-        for i in range(size):
+        for i in range(size):  # Iterate over the shared memory
             output += shared_a[x, i] * shared_b[i, y]
+        # Write the computed result back to global memory
         out[loc] = output
 
 

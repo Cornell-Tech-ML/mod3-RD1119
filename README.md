@@ -39,42 +39,42 @@ The files that will be synced are:
 
    ```bash
 MAP
- 
+
 ================================================================================
- Parallel Accelerator Optimizing:  Function tensor_map.<locals>._map, 
-/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (175)  
+ Parallel Accelerator Optimizing:  Function tensor_map.<locals>._map,
+/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (175)
 ================================================================================
 
 
-Parallel loop listing for  Function tensor_map.<locals>._map, /users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (175) 
+Parallel loop listing for  Function tensor_map.<locals>._map, /users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (175)
 -----------------------------------------------------------------------------|loop #ID
-    def _map(                                                                | 
-        out: Storage,                                                        | 
-        out_shape: Shape,                                                    | 
-        out_strides: Strides,                                                | 
-        in_storage: Storage,                                                 | 
-        in_shape: Shape,                                                     | 
-        in_strides: Strides,                                                 | 
-    ) -> None:                                                               | 
-        # TODO: Implement for Task 3.1.                                      | 
-        out_size = len(out)                                                  | 
-        if np.array_equal(out_strides, in_strides) and np.array_equal(       | 
-            out_shape, in_shape                                              | 
-        ):                                                                   | 
+    def _map(                                                                |
+        out: Storage,                                                        |
+        out_shape: Shape,                                                    |
+        out_strides: Strides,                                                |
+        in_storage: Storage,                                                 |
+        in_shape: Shape,                                                     |
+        in_strides: Strides,                                                 |
+    ) -> None:                                                               |
+        # TODO: Implement for Task 3.1.                                      |
+        out_size = len(out)                                                  |
+        if np.array_equal(out_strides, in_strides) and np.array_equal(       |
+            out_shape, in_shape                                              |
+        ):                                                                   |
             for ordinal in prange(out_size):---------------------------------| #2
-                out[ordinal] = fn(in_storage[ordinal])                       | 
-        else:                                                                | 
+                out[ordinal] = fn(in_storage[ordinal])                       |
+        else:                                                                |
             for ordinal in prange(out_size):---------------------------------| #3
                 in_index: Index = np.zeros(MAX_DIMS, dtype=np.int32)---------| #0
                 out_index: Index = np.zeros(MAX_DIMS, dtype=np.int32)--------| #1
-                to_index(ordinal, out_shape, out_index)                      | 
-                broadcast_index(out_index, out_shape, in_shape, in_index)    | 
-                position = index_to_position(in_index, in_strides)           | 
-                out_position = index_to_position(out_index, out_strides)     | 
-                out[out_position] = fn(float(in_storage[position]))          | 
+                to_index(ordinal, out_shape, out_index)                      |
+                broadcast_index(out_index, out_shape, in_shape, in_index)    |
+                position = index_to_position(in_index, in_strides)           |
+                out_position = index_to_position(out_index, out_strides)     |
+                out[out_position] = fn(float(in_storage[position]))          |
 --------------------------------- Fusing loops ---------------------------------
 Attempting fusion of parallel loops (combines loops with similar properties)...
- 
+
 Fused loop summary:
 +--0 has the following loops fused into it:
    +--1 (fused)
@@ -83,7 +83,7 @@ loop(s) (originating from loops labelled: #2, #3, #0).
 --------------------------------------------------------------------------------
 ---------------------------- Optimising loop nests -----------------------------
 Attempting loop nest rewrites (optimising for the largest parallel loops)...
- 
+
 +--3 is a parallel loop
    +--0 --> rewritten as a serial loop
 --------------------------------------------------------------------------------
@@ -101,71 +101,71 @@ Parallel region 0:
    +--0 (serial, fused with loop(s): 1)
 
 
- 
+
 Parallel region 0 (loop #3) had 1 loop(s) fused and 1 loop(s) serialized as part
  of the larger parallel loop (#3).
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
- 
+
 ---------------------------Loop invariant code motion---------------------------
 Allocation hoisting:
-The memory allocation derived from the instruction at 
-/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (192) is hoisted out of 
-the parallel loop labelled #3 (it will be performed before the loop is executed 
+The memory allocation derived from the instruction at
+/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (192) is hoisted out of
+the parallel loop labelled #3 (it will be performed before the loop is executed
 and reused inside the loop):
    Allocation:: in_index: Index = np.zeros(MAX_DIMS, dtype=np.int32)
     - numpy.empty() is used for the allocation.
-The memory allocation derived from the instruction at 
-/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (193) is hoisted out of 
-the parallel loop labelled #3 (it will be performed before the loop is executed 
+The memory allocation derived from the instruction at
+/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (193) is hoisted out of
+the parallel loop labelled #3 (it will be performed before the loop is executed
 and reused inside the loop):
    Allocation:: out_index: Index = np.zeros(MAX_DIMS, dtype=np.int32)
     - numpy.empty() is used for the allocation.
 None
 ZIP
- 
+
 ================================================================================
- Parallel Accelerator Optimizing:  Function tensor_zip.<locals>._zip, 
-/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (226)  
+ Parallel Accelerator Optimizing:  Function tensor_zip.<locals>._zip,
+/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (226)
 ================================================================================
 
 
-Parallel loop listing for  Function tensor_zip.<locals>._zip, /users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (226) 
+Parallel loop listing for  Function tensor_zip.<locals>._zip, /users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (226)
 -----------------------------------------------------------------------------|loop #ID
-    def _zip(                                                                | 
-        out: Storage,                                                        | 
-        out_shape: Shape,                                                    | 
-        out_strides: Strides,                                                | 
-        a_storage: Storage,                                                  | 
-        a_shape: Shape,                                                      | 
-        a_strides: Strides,                                                  | 
-        b_storage: Storage,                                                  | 
-        b_shape: Shape,                                                      | 
-        b_strides: Strides,                                                  | 
-    ) -> None:                                                               | 
-        # TODO: Implement for Task 3.1.                                      | 
-        out_size = len(out)                                                  | 
-        if (                                                                 | 
-            np.array_equal(out_shape, b_shape)                               | 
-            and np.array_equal(out_shape, a_shape)                           | 
-            and np.array_equal(out_strides, a_strides)                       | 
-            and np.array_equal(out_strides, b_strides)                       | 
-        ):                                                                   | 
+    def _zip(                                                                |
+        out: Storage,                                                        |
+        out_shape: Shape,                                                    |
+        out_strides: Strides,                                                |
+        a_storage: Storage,                                                  |
+        a_shape: Shape,                                                      |
+        a_strides: Strides,                                                  |
+        b_storage: Storage,                                                  |
+        b_shape: Shape,                                                      |
+        b_strides: Strides,                                                  |
+    ) -> None:                                                               |
+        # TODO: Implement for Task 3.1.                                      |
+        out_size = len(out)                                                  |
+        if (                                                                 |
+            np.array_equal(out_shape, b_shape)                               |
+            and np.array_equal(out_shape, a_shape)                           |
+            and np.array_equal(out_strides, a_strides)                       |
+            and np.array_equal(out_strides, b_strides)                       |
+        ):                                                                   |
             for ordinal in prange(out_size):---------------------------------| #4
-                out[ordinal] = fn(a_storage[ordinal], b_storage[ordinal])    | 
-        else:                                                                | 
+                out[ordinal] = fn(a_storage[ordinal], b_storage[ordinal])    |
+        else:                                                                |
             for ordinal in prange(out_size):---------------------------------| #5
-                out_index: Index = np.empty(MAX_DIMS, dtype=np.int32)        | 
-                a_index: Index = np.empty(MAX_DIMS, dtype=np.int32)          | 
-                b_index: Index = np.empty(MAX_DIMS, dtype=np.int32)          | 
-                to_index(ordinal, out_shape, out_index)                      | 
-                broadcast_index(out_index, out_shape, a_shape, a_index)      | 
-                a_data = a_storage[index_to_position(a_index, a_strides)]    | 
-                broadcast_index(out_index, out_shape, b_shape, b_index)      | 
-                b_data = b_storage[index_to_position(b_index, b_strides)]    | 
-                out[index_to_position(out_index, out_strides)] = fn(         | 
-                    float(a_data), float(b_data)                             | 
-                )                                                            | 
+                out_index: Index = np.empty(MAX_DIMS, dtype=np.int32)        |
+                a_index: Index = np.empty(MAX_DIMS, dtype=np.int32)          |
+                b_index: Index = np.empty(MAX_DIMS, dtype=np.int32)          |
+                to_index(ordinal, out_shape, out_index)                      |
+                broadcast_index(out_index, out_shape, a_shape, a_index)      |
+                a_data = a_storage[index_to_position(a_index, a_strides)]    |
+                broadcast_index(out_index, out_shape, b_shape, b_index)      |
+                b_data = b_storage[index_to_position(b_index, b_strides)]    |
+                out[index_to_position(out_index, out_strides)] = fn(         |
+                    float(a_data), float(b_data)                             |
+                )                                                            |
 --------------------------------- Fusing loops ---------------------------------
 Attempting fusion of parallel loops (combines loops with similar properties)...
 Following the attempted fusion of parallel for-loops there are 2 parallel for-
@@ -177,62 +177,62 @@ loop(s) (originating from loops labelled: #4, #5).
 Parallel structure is already optimal.
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
- 
+
 ---------------------------Loop invariant code motion---------------------------
 Allocation hoisting:
-The memory allocation derived from the instruction at 
-/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (249) is hoisted out of 
-the parallel loop labelled #5 (it will be performed before the loop is executed 
+The memory allocation derived from the instruction at
+/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (249) is hoisted out of
+the parallel loop labelled #5 (it will be performed before the loop is executed
 and reused inside the loop):
    Allocation:: out_index: Index = np.empty(MAX_DIMS, dtype=np.int32)
     - numpy.empty() is used for the allocation.
-The memory allocation derived from the instruction at 
-/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (250) is hoisted out of 
-the parallel loop labelled #5 (it will be performed before the loop is executed 
+The memory allocation derived from the instruction at
+/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (250) is hoisted out of
+the parallel loop labelled #5 (it will be performed before the loop is executed
 and reused inside the loop):
    Allocation:: a_index: Index = np.empty(MAX_DIMS, dtype=np.int32)
     - numpy.empty() is used for the allocation.
-The memory allocation derived from the instruction at 
-/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (251) is hoisted out of 
-the parallel loop labelled #5 (it will be performed before the loop is executed 
+The memory allocation derived from the instruction at
+/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (251) is hoisted out of
+the parallel loop labelled #5 (it will be performed before the loop is executed
 and reused inside the loop):
    Allocation:: b_index: Index = np.empty(MAX_DIMS, dtype=np.int32)
     - numpy.empty() is used for the allocation.
 None
 REDUCE
- 
+
 ================================================================================
- Parallel Accelerator Optimizing:  Function tensor_reduce.<locals>._reduce, 
-/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (285)  
+ Parallel Accelerator Optimizing:  Function tensor_reduce.<locals>._reduce,
+/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (285)
 ================================================================================
 
 
-Parallel loop listing for  Function tensor_reduce.<locals>._reduce, /users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (285) 
+Parallel loop listing for  Function tensor_reduce.<locals>._reduce, /users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (285)
 --------------------------------------------------------------------------------|loop #ID
-    def _reduce(                                                                | 
-        out: Storage,                                                           | 
-        out_shape: Shape,                                                       | 
-        out_strides: Strides,                                                   | 
-        a_storage: Storage,                                                     | 
-        a_shape: Shape,                                                         | 
-        a_strides: Strides,                                                     | 
-        reduce_dim: int,                                                        | 
-    ) -> None:                                                                  | 
-        # TODO: Implement for Task 3.1.                                         | 
-                                                                                | 
-        out_size: int = len(out)                                                | 
-        reduce_size: int = a_shape[reduce_dim]                                  | 
+    def _reduce(                                                                |
+        out: Storage,                                                           |
+        out_shape: Shape,                                                       |
+        out_strides: Strides,                                                   |
+        a_storage: Storage,                                                     |
+        a_shape: Shape,                                                         |
+        a_strides: Strides,                                                     |
+        reduce_dim: int,                                                        |
+    ) -> None:                                                                  |
+        # TODO: Implement for Task 3.1.                                         |
+                                                                                |
+        out_size: int = len(out)                                                |
+        reduce_size: int = a_shape[reduce_dim]                                  |
         for ordinal in prange(out_size):----------------------------------------| #7
             out_index: Index = np.zeros(MAX_DIMS, dtype=np.int32)---------------| #6
-            to_index(ordinal, out_shape, out_index)                             | 
-            a_ordinal = index_to_position(out_index, a_strides)                 | 
-            reduced_val = out[ordinal]                                          | 
-            for j in range(reduce_size):                                        | 
-                reduced_val = fn(                                               | 
-                    reduced_val,                                                | 
-                    float(a_storage[a_ordinal + j * a_strides[reduce_dim]]),    | 
-                )                                                               | 
-            out[ordinal] = reduced_val                                          | 
+            to_index(ordinal, out_shape, out_index)                             |
+            a_ordinal = index_to_position(out_index, a_strides)                 |
+            reduced_val = out[ordinal]                                          |
+            for j in range(reduce_size):                                        |
+                reduced_val = fn(                                               |
+                    reduced_val,                                                |
+                    float(a_storage[a_ordinal + j * a_strides[reduce_dim]]),    |
+                )                                                               |
+            out[ordinal] = reduced_val                                          |
 --------------------------------- Fusing loops ---------------------------------
 Attempting fusion of parallel loops (combines loops with similar properties)...
 Following the attempted fusion of parallel for-loops there are 2 parallel for-
@@ -240,7 +240,7 @@ loop(s) (originating from loops labelled: #7, #6).
 --------------------------------------------------------------------------------
 ---------------------------- Optimising loop nests -----------------------------
 Attempting loop nest rewrites (optimising for the largest parallel loops)...
- 
+
 +--7 is a parallel loop
    +--6 --> rewritten as a serial loop
 --------------------------------------------------------------------------------
@@ -257,94 +257,94 @@ Parallel region 0:
    +--6 (serial)
 
 
- 
+
 Parallel region 0 (loop #7) had 0 loop(s) fused and 1 loop(s) serialized as part
  of the larger parallel loop (#7).
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
- 
+
 ---------------------------Loop invariant code motion---------------------------
 Allocation hoisting:
-The memory allocation derived from the instruction at 
-/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (299) is hoisted out of 
-the parallel loop labelled #7 (it will be performed before the loop is executed 
+The memory allocation derived from the instruction at
+/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (299) is hoisted out of
+the parallel loop labelled #7 (it will be performed before the loop is executed
 and reused inside the loop):
    Allocation:: out_index: Index = np.zeros(MAX_DIMS, dtype=np.int32)
     - numpy.empty() is used for the allocation.
 None
 MATRIX MULTIPLY
- 
+
 ================================================================================
- Parallel Accelerator Optimizing:  Function _tensor_matrix_multiply, 
-/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (313)  
+ Parallel Accelerator Optimizing:  Function _tensor_matrix_multiply,
+/users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (313)
 ================================================================================
 
 
-Parallel loop listing for  Function _tensor_matrix_multiply, /users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (313) 
+Parallel loop listing for  Function _tensor_matrix_multiply, /users/rundong/github/mod3-rd1119/minitorch/fast_ops.py (313)
 ---------------------------------------------------------------------------------------|loop #ID
-def _tensor_matrix_multiply(                                                           | 
-    out: Storage,                                                                      | 
-    out_shape: Shape,                                                                  | 
-    out_strides: Strides,                                                              | 
-    a_storage: Storage,                                                                | 
-    a_shape: Shape,                                                                    | 
-    a_strides: Strides,                                                                | 
-    b_storage: Storage,                                                                | 
-    b_shape: Shape,                                                                    | 
-    b_strides: Strides,                                                                | 
-) -> None:                                                                             | 
-    """NUMBA tensor matrix multiply function.                                          | 
-                                                                                       | 
-    Should work for any tensor shapes that broadcast as long as                        | 
-                                                                                       | 
-    ```                                                                                | 
-    assert a_shape[-1] == b_shape[-2]                                                  | 
-    ```                                                                                | 
-                                                                                       | 
-    Optimizations:                                                                     | 
-                                                                                       | 
-    * Outer loop in parallel                                                           | 
-    * No index buffers or function calls                                               | 
-    * Inner loop should have no global writes, 1 multiply.                             | 
-                                                                                       | 
-                                                                                       | 
-    Args:                                                                              | 
-    ----                                                                               | 
-        out (Storage): storage for `out` tensor                                        | 
-        out_shape (Shape): shape for `out` tensor                                      | 
-        out_strides (Strides): strides for `out` tensor                                | 
-        a_storage (Storage): storage for `a` tensor                                    | 
-        a_shape (Shape): shape for `a` tensor                                          | 
-        a_strides (Strides): strides for `a` tensor                                    | 
-        b_storage (Storage): storage for `b` tensor                                    | 
-        b_shape (Shape): shape for `b` tensor                                          | 
-        b_strides (Strides): strides for `b` tensor                                    | 
-                                                                                       | 
-    Returns:                                                                           | 
-    -------                                                                            | 
-        None : Fills in `out`                                                          | 
-                                                                                       | 
-    """                                                                                | 
-    a_batch_stride = a_strides[0] if a_shape[0] > 1 else 0                             | 
-    b_batch_stride = b_strides[0] if b_shape[0] > 1 else 0                             | 
-                                                                                       | 
-    # TODO: Implement for Task 3.2.                                                    | 
-    N = a_shape[-1]                                                                    | 
-    I, J, K = out_shape[-3:]                                                           | 
+def _tensor_matrix_multiply(                                                           |
+    out: Storage,                                                                      |
+    out_shape: Shape,                                                                  |
+    out_strides: Strides,                                                              |
+    a_storage: Storage,                                                                |
+    a_shape: Shape,                                                                    |
+    a_strides: Strides,                                                                |
+    b_storage: Storage,                                                                |
+    b_shape: Shape,                                                                    |
+    b_strides: Strides,                                                                |
+) -> None:                                                                             |
+    """NUMBA tensor matrix multiply function.                                          |
+                                                                                       |
+    Should work for any tensor shapes that broadcast as long as                        |
+                                                                                       |
+    ```                                                                                |
+    assert a_shape[-1] == b_shape[-2]                                                  |
+    ```                                                                                |
+                                                                                       |
+    Optimizations:                                                                     |
+                                                                                       |
+    * Outer loop in parallel                                                           |
+    * No index buffers or function calls                                               |
+    * Inner loop should have no global writes, 1 multiply.                             |
+                                                                                       |
+                                                                                       |
+    Args:                                                                              |
+    ----                                                                               |
+        out (Storage): storage for `out` tensor                                        |
+        out_shape (Shape): shape for `out` tensor                                      |
+        out_strides (Strides): strides for `out` tensor                                |
+        a_storage (Storage): storage for `a` tensor                                    |
+        a_shape (Shape): shape for `a` tensor                                          |
+        a_strides (Strides): strides for `a` tensor                                    |
+        b_storage (Storage): storage for `b` tensor                                    |
+        b_shape (Shape): shape for `b` tensor                                          |
+        b_strides (Strides): strides for `b` tensor                                    |
+                                                                                       |
+    Returns:                                                                           |
+    -------                                                                            |
+        None : Fills in `out`                                                          |
+                                                                                       |
+    """                                                                                |
+    a_batch_stride = a_strides[0] if a_shape[0] > 1 else 0                             |
+    b_batch_stride = b_strides[0] if b_shape[0] > 1 else 0                             |
+                                                                                       |
+    # TODO: Implement for Task 3.2.                                                    |
+    N = a_shape[-1]                                                                    |
+    I, J, K = out_shape[-3:]                                                           |
     for i in prange(I):----------------------------------------------------------------| #10
         for j in prange(J):------------------------------------------------------------| #9
             for k in prange(K):--------------------------------------------------------| #8
-                val = 0.0                                                              | 
-                a_ordinal = a_batch_stride * i + a_strides[-2] * j                     | 
-                b_ordinal = b_batch_stride * i + b_strides[-1] * k                     | 
-                for _ in range(N):                                                     | 
-                    val += a_storage[a_ordinal] * b_storage[b_ordinal]                 | 
-                    a_ordinal += a_strides[-1]                                         | 
-                    b_ordinal += b_strides[-2]                                         | 
-                out_ordinal = (                                                        | 
-                    out_strides[-1] * k + out_strides[-2] * j + out_strides[-3] * i    | 
-                )                                                                      | 
-                out[out_ordinal] = val                                                 | 
+                val = 0.0                                                              |
+                a_ordinal = a_batch_stride * i + a_strides[-2] * j                     |
+                b_ordinal = b_batch_stride * i + b_strides[-1] * k                     |
+                for _ in range(N):                                                     |
+                    val += a_storage[a_ordinal] * b_storage[b_ordinal]                 |
+                    a_ordinal += a_strides[-1]                                         |
+                    b_ordinal += b_strides[-2]                                         |
+                out_ordinal = (                                                        |
+                    out_strides[-1] * k + out_strides[-2] * j + out_strides[-3] * i    |
+                )                                                                      |
+                out[out_ordinal] = val                                                 |
 --------------------------------- Fusing loops ---------------------------------
 Attempting fusion of parallel loops (combines loops with similar properties)...
 Following the attempted fusion of parallel for-loops there are 2 parallel for-
@@ -352,7 +352,7 @@ loop(s) (originating from loops labelled: #10, #9).
 --------------------------------------------------------------------------------
 ---------------------------- Optimising loop nests -----------------------------
 Attempting loop nest rewrites (optimising for the largest parallel loops)...
- 
+
 +--10 is a parallel loop
    +--9 --> rewritten as a serial loop
       +--8 --> rewritten as a serial loop
@@ -372,12 +372,12 @@ Parallel region 0:
       +--8 (serial)
 
 
- 
-Parallel region 0 (loop #10) had 0 loop(s) fused and 2 loop(s) serialized as 
+
+Parallel region 0 (loop #10) had 0 loop(s) fused and 2 loop(s) serialized as
 part of the larger parallel loop (#10).
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
- 
+
 ---------------------------Loop invariant code motion---------------------------
 Allocation hoisting:
 No allocation hoisting found
@@ -385,13 +385,13 @@ None
 ```
 # Task 4
 
-| Size| FastOps Time (s) | CudaOps Time (s) |
+| Matrix Size          | FastOps Time (s) | CudaOps Time (s) |
 |----------------------|------------------|------------------|
-| 64                   | 0.02312         | 0.02335         |
-| 128                  | 0.05791         | 0.04449         |
-| 256                  | 0.30489         | 0.18598         |
-| 512                  | 1.12996         | 0.22937         |
-| 1024                 | 9.40424         | 1.03345         |
+| 64                   | 0.00342         | 0.00641         |
+| 128                  | 0.01582         | 0.01489         |
+| 256                  | 0.09494         | 0.05744         |
+| 512                  | 1.07415         | 0.21905         |
+| 1024                 | 7.84241         | 0.99863         |
 The graph for the comparation between Cuda Implementation and naive operations.
 ![task4-result](./Graph/Task4.png)
 
@@ -403,56 +403,56 @@ The graph for the comparation between Cuda Implementation and naive operations.
    ```
 
    ```bash
-        Epoch  0  loss  7.688148222933304 correct 30 Time per epoch 0.3406862258911133
-        Epoch  10  loss  6.1680151037968205 correct 35 Time per epoch 1.6692253589630126
-        Epoch  20  loss  4.7741392840752965 correct 37 Time per epoch 1.762924313545227
-        Epoch  30  loss  4.346382903389426 correct 40 Time per epoch 1.6808827877044679
-        Epoch  40  loss  4.308503028779119 correct 44 Time per epoch 1.719099497795105
-        Epoch  50  loss  4.197957964156718 correct 42 Time per epoch 1.7342091798782349
-        Epoch  60  loss  2.9995077168207036 correct 45 Time per epoch 1.6808377504348755
-        Epoch  70  loss  3.4779208657886667 correct 46 Time per epoch 1.7483661651611329
-        Epoch  80  loss  3.9497797183263703 correct 48 Time per epoch 1.6790812253952025
-        Epoch  90  loss  3.9307794378358123 correct 46 Time per epoch 1.6695638656616212
-        Epoch  100  loss  2.3408501507309514 correct 49 Time per epoch 1.824935245513916
-        Epoch  110  loss  2.0587853155329743 correct 48 Time per epoch 1.6709300994873046
-        Epoch  120  loss  4.132695305593517 correct 46 Time per epoch 1.7615332841873168
-        Epoch  130  loss  3.454619310193144 correct 50 Time per epoch 1.674421501159668
-        Epoch  140  loss  1.8311892886856576 correct 48 Time per epoch 1.6600759744644165
-        Epoch  150  loss  1.0560337043392742 correct 49 Time per epoch 1.7388724327087401
-        Epoch  160  loss  1.980566183854537 correct 48 Time per epoch 1.667748475074768
-        Epoch  170  loss  1.7985442649207157 correct 49 Time per epoch 1.7507199764251709
-        Epoch  180  loss  0.5399352055832123 correct 47 Time per epoch 1.6556903839111328
-        Epoch  190  loss  1.6947419634122007 correct 50 Time per epoch 1.6585009574890137
-        Epoch  200  loss  0.9725340137803034 correct 48 Time per epoch 1.7355946063995362
-        Epoch  210  loss  1.2648026105825658 correct 47 Time per epoch 1.6688340902328491
-        Epoch  220  loss  0.6692184937686563 correct 48 Time per epoch 1.6789358139038086
-        Epoch  230  loss  0.48010416029548736 correct 49 Time per epoch 1.724643301963806
-        Epoch  240  loss  1.080381112160227 correct 49 Time per epoch 1.6610349655151366
-        Epoch  250  loss  0.4393718342869569 correct 47 Time per epoch 1.7338584423065186
-        Epoch  260  loss  1.1302600183773832 correct 50 Time per epoch 1.6751198053359986
-        Epoch  270  loss  1.2608600825610796 correct 50 Time per epoch 1.7502344131469727
-        Epoch  280  loss  1.4453276193213649 correct 49 Time per epoch 1.7316830635070801
-        Epoch  290  loss  0.952912317426057 correct 49 Time per epoch 1.6306398153305053
-        Epoch  300  loss  0.7348444740058877 correct 50 Time per epoch 1.7147754192352296
-        Epoch  310  loss  0.9970982565364992 correct 50 Time per epoch 1.7062728643417358
-        Epoch  320  loss  1.1312808032704507 correct 50 Time per epoch 1.6513673543930054
-        Epoch  330  loss  0.9106938125691048 correct 49 Time per epoch 1.7412392854690553
-        Epoch  340  loss  0.2432130729158703 correct 49 Time per epoch 1.6508301019668579
-        Epoch  350  loss  1.4321382612744478 correct 48 Time per epoch 1.6689801692962647
-        Epoch  360  loss  1.2770993632872834 correct 48 Time per epoch 1.7349042415618896
-        Epoch  370  loss  0.3905935357692314 correct 49 Time per epoch 1.6653281211853028
-        Epoch  380  loss  0.10067609630348295 correct 50 Time per epoch 1.7467737674713135
-        Epoch  390  loss  0.5296563485765328 correct 49 Time per epoch 1.664874053001404
-        Epoch  400  loss  0.10217826939219532 correct 48 Time per epoch 1.6567391157150269
-        Epoch  410  loss  1.5051979274325107 correct 49 Time per epoch 1.7463252544403076
-        Epoch  420  loss  0.6155442472982214 correct 49 Time per epoch 1.670920157432556
-        Epoch  430  loss  0.14839779512578766 correct 49 Time per epoch 1.712520694732666
-        Epoch  440  loss  0.45083244030075137 correct 50 Time per epoch 1.7555158853530883
-        Epoch  450  loss  0.6071345827957436 correct 48 Time per epoch 1.6565726280212403
-        Epoch  460  loss  0.4478856085316886 correct 49 Time per epoch 1.7316564559936523
-        Epoch  470  loss  1.1203439569826616 correct 45 Time per epoch 1.659480905532837
-        Epoch  480  loss  0.17388449337319056 correct 49 Time per epoch 1.69452645778656
-        Epoch  490  loss  0.8848135997497504 correct 50 Time per epoch 1.7197197437286378
+        Epoch  0  loss  7.030329622322549 correct 29 Time per epoch 0.38790576457977294
+        Epoch  10  loss  4.496681386710301 correct 26 Time per epoch 1.6367682933807373
+        Epoch  20  loss  6.128431978335912 correct 36 Time per epoch 1.5687076330184937
+        Epoch  30  loss  4.370202298858919 correct 46 Time per epoch 1.561046314239502
+        Epoch  40  loss  3.6281915183647877 correct 46 Time per epoch 1.576847457885742
+        Epoch  50  loss  3.1357959770227106 correct 45 Time per epoch 1.6455533742904662
+        Epoch  60  loss  2.162244334070718 correct 47 Time per epoch 1.5567980766296388
+        Epoch  70  loss  2.6602194450890453 correct 45 Time per epoch 1.5652177810668946
+        Epoch  80  loss  2.7124660858865672 correct 43 Time per epoch 1.7340365171432495
+        Epoch  90  loss  1.6830174686967776 correct 48 Time per epoch 1.5639925956726075
+        Epoch  100  loss  2.4295431377832513 correct 43 Time per epoch 1.562187623977661
+        Epoch  110  loss  1.6566031100281162 correct 47 Time per epoch 1.5683364391326904
+        Epoch  120  loss  2.1416442367919024 correct 47 Time per epoch 1.6363176822662353
+        Epoch  130  loss  1.243159113703022 correct 48 Time per epoch 1.5588584184646606
+        Epoch  140  loss  1.9213199064366395 correct 45 Time per epoch 1.5601646661758424
+        Epoch  150  loss  2.2682643219923673 correct 48 Time per epoch 1.6348508596420288
+        Epoch  160  loss  1.5838061958529246 correct 50 Time per epoch 1.5631211996078491
+        Epoch  170  loss  1.8281198092424555 correct 49 Time per epoch 1.5629527807235717
+        Epoch  180  loss  1.3376825719361338 correct 50 Time per epoch 1.5753697872161865
+        Epoch  190  loss  1.1465268072414005 correct 46 Time per epoch 1.6182536602020263
+        Epoch  200  loss  1.006569316897611 correct 48 Time per epoch 1.5613746166229248
+        Epoch  210  loss  3.4060009951335757 correct 47 Time per epoch 1.5633638858795167
+        Epoch  220  loss  4.264992780290969 correct 48 Time per epoch 1.6390291452407837
+        Epoch  230  loss  0.8531605009705876 correct 50 Time per epoch 1.5603173494338989
+        Epoch  240  loss  6.130987642861223 correct 38 Time per epoch 1.5764514684677124
+        Epoch  250  loss  2.5826707630260684 correct 47 Time per epoch 1.5795851230621338
+        Epoch  260  loss  1.1080700590362655 correct 48 Time per epoch 1.622667956352234
+        Epoch  270  loss  0.7314500832138859 correct 45 Time per epoch 1.6566795587539673
+        Epoch  280  loss  1.305768182815533 correct 47 Time per epoch 1.550727367401123
+        Epoch  290  loss  1.0535672113660866 correct 49 Time per epoch 1.6345623016357422
+        Epoch  300  loss  1.7207453308019889 correct 50 Time per epoch 1.5590502500534058
+        Epoch  310  loss  0.5018154470962541 correct 45 Time per epoch 1.5623395919799805
+        Epoch  320  loss  1.179527347257625 correct 49 Time per epoch 1.5539769649505615
+        Epoch  330  loss  0.8173735946007702 correct 47 Time per epoch 1.6320308923721314
+        Epoch  340  loss  2.0692489647649293 correct 48 Time per epoch 1.5556090593338012
+        Epoch  350  loss  1.831574086915719 correct 50 Time per epoch 1.5602456092834474
+        Epoch  360  loss  0.8058495521517599 correct 50 Time per epoch 1.6063069820404052
+        Epoch  370  loss  1.126596935163321 correct 47 Time per epoch 1.5792619943618775
+        Epoch  380  loss  1.5734018531253877 correct 47 Time per epoch 1.5524924516677856
+        Epoch  390  loss  1.3064163183416955 correct 49 Time per epoch 1.56344735622406
+        Epoch  400  loss  0.8470412570068735 correct 50 Time per epoch 1.6317063331604005
+        Epoch  410  loss  0.37325089955354207 correct 50 Time per epoch 1.554289197921753
+        Epoch  420  loss  0.794281589998707 correct 50 Time per epoch 1.5523608922958374
+        Epoch  430  loss  0.1200985647721971 correct 47 Time per epoch 1.6176042795181274
+        Epoch  440  loss  1.1198057735316644 correct 50 Time per epoch 1.5906382560729981
+        Epoch  450  loss  0.45207294402710496 correct 50 Time per epoch 1.5524711608886719
+        Epoch  460  loss  1.0801616462274302 correct 50 Time per epoch 1.5584780693054199
+        Epoch  470  loss  0.8228507731021052 correct 49 Time per epoch 1.7180626392364502
+        Epoch  480  loss  1.2685997379897098 correct 50 Time per epoch 1.5610052585601806
+        Epoch  490  loss  1.3596379225545836 correct 50 Time per epoch 1.547406053543091
 ```
 ## Log for CPU, Hidden=100, Dataset=Split, Rate=0.05
 ```bash
@@ -460,56 +460,56 @@ The graph for the comparation between Cuda Implementation and naive operations.
    ```
 
    ```bash
-        Epoch  0  loss  8.760159055029817 correct 22 Time per epoch 1.537349271774292
-        Epoch  10  loss  6.241649899491496 correct 36 Time per epoch 0.18757109642028807
-        Epoch  20  loss  5.548609635617908 correct 42 Time per epoch 0.11908247470855712
-        Epoch  30  loss  6.880766694680443 correct 45 Time per epoch 0.11998693943023682
-        Epoch  40  loss  4.506264573864563 correct 46 Time per epoch 0.11753599643707276
-        Epoch  50  loss  3.712752086351173 correct 48 Time per epoch 0.11840150356292725
-        Epoch  60  loss  2.373912691896443 correct 48 Time per epoch 0.1181708574295044
-        Epoch  70  loss  3.2657258889205116 correct 46 Time per epoch 0.11861536502838135
-        Epoch  80  loss  2.8084246521120333 correct 47 Time per epoch 0.12122879028320313
-        Epoch  90  loss  2.384135625036369 correct 46 Time per epoch 0.11840715408325195
-        Epoch  100  loss  1.8495565326822088 correct 50 Time per epoch 0.188248610496521
-        Epoch  110  loss  2.3942707454495604 correct 47 Time per epoch 0.1566373348236084
-        Epoch  120  loss  1.0981690192055171 correct 47 Time per epoch 0.118084716796875
-        Epoch  130  loss  1.4690774441386465 correct 49 Time per epoch 0.11915571689605713
-        Epoch  140  loss  1.8279052712438375 correct 48 Time per epoch 0.11936712265014648
-        Epoch  150  loss  1.549738276093373 correct 47 Time per epoch 0.12140779495239258
-        Epoch  160  loss  1.6774991053733475 correct 50 Time per epoch 0.11907682418823243
-        Epoch  170  loss  1.997653197230314 correct 48 Time per epoch 0.11867866516113282
-        Epoch  180  loss  0.6830524800190532 correct 48 Time per epoch 0.1192049503326416
-        Epoch  190  loss  1.2332131857724176 correct 50 Time per epoch 0.14886963367462158
-        Epoch  200  loss  0.8331625222090857 correct 48 Time per epoch 0.19944820404052735
-        Epoch  210  loss  2.179671824114534 correct 47 Time per epoch 0.12128193378448486
-        Epoch  220  loss  1.290679286002375 correct 49 Time per epoch 0.12162904739379883
-        Epoch  230  loss  1.0441280975794944 correct 50 Time per epoch 0.11998724937438965
-        Epoch  240  loss  1.5425489802518713 correct 48 Time per epoch 0.11952309608459473
-        Epoch  250  loss  0.5032168673034659 correct 50 Time per epoch 0.12177577018737792
-        Epoch  260  loss  1.3158919401176696 correct 48 Time per epoch 0.12483925819396972
-        Epoch  270  loss  1.940937344700474 correct 49 Time per epoch 0.1161881923675537
-        Epoch  280  loss  1.7571371582267115 correct 48 Time per epoch 0.11650233268737793
-        Epoch  290  loss  1.5670317658417048 correct 49 Time per epoch 0.18432722091674805
-        Epoch  300  loss  0.3443326506523604 correct 49 Time per epoch 0.17966887950897217
-        Epoch  310  loss  2.297542715312856 correct 47 Time per epoch 0.11801111698150635
-        Epoch  320  loss  1.0134241841378278 correct 50 Time per epoch 0.1198911190032959
-        Epoch  330  loss  2.3826357470717943 correct 48 Time per epoch 0.11989438533782959
-        Epoch  340  loss  1.6724125547625721 correct 48 Time per epoch 0.1191814661026001
-        Epoch  350  loss  0.9145743967362193 correct 49 Time per epoch 0.11872429847717285
-        Epoch  360  loss  0.1480268609576475 correct 50 Time per epoch 0.11805486679077148
-        Epoch  370  loss  0.21150701087148185 correct 48 Time per epoch 0.11776306629180908
-        Epoch  380  loss  3.1533191319910374 correct 48 Time per epoch 0.1311892032623291
-        Epoch  390  loss  2.80913092445702 correct 45 Time per epoch 0.23256187438964843
-        Epoch  400  loss  0.8271929613600563 correct 49 Time per epoch 0.12296621799468994
-        Epoch  410  loss  1.0745382289338106 correct 49 Time per epoch 0.120625901222229
-        Epoch  420  loss  0.3886742028591402 correct 49 Time per epoch 0.11828255653381348
-        Epoch  430  loss  0.37466113539860524 correct 50 Time per epoch 0.11663808822631835
-        Epoch  440  loss  1.0651466401835046 correct 50 Time per epoch 0.12049369812011719
-        Epoch  450  loss  0.2913659388317869 correct 48 Time per epoch 0.12022242546081544
-        Epoch  460  loss  0.4868755994390212 correct 49 Time per epoch 0.12141685485839844
-        Epoch  470  loss  0.21966644673149133 correct 48 Time per epoch 0.11787593364715576
-        Epoch  480  loss  1.4262520704775954 correct 48 Time per epoch 0.17821290493011474
-        Epoch  490  loss  0.3155911563738448 correct 48 Time per epoch 0.18151867389678955
+        Epoch  0  loss  6.641579905541806 correct 28 Time per epoch 1.435877799987793
+        Epoch  10  loss  5.02394374441548 correct 39 Time per epoch 0.13884754180908204
+        Epoch  20  loss  5.0456205238833505 correct 35 Time per epoch 0.20109705924987792
+        Epoch  30  loss  3.7758766118571194 correct 45 Time per epoch 0.11016435623168945
+        Epoch  40  loss  5.013064862517209 correct 47 Time per epoch 0.11224696636199952
+        Epoch  50  loss  3.1928480765096827 correct 48 Time per epoch 0.11033351421356201
+        Epoch  60  loss  1.898677206465932 correct 47 Time per epoch 0.11016056537628174
+        Epoch  70  loss  1.6926557361662378 correct 48 Time per epoch 0.10958619117736816
+        Epoch  80  loss  2.6076206100632975 correct 46 Time per epoch 0.111328387260437
+        Epoch  90  loss  1.1044360522360688 correct 48 Time per epoch 0.10992507934570313
+        Epoch  100  loss  0.5192699155888002 correct 47 Time per epoch 0.1095463514328003
+        Epoch  110  loss  0.7293814221777412 correct 48 Time per epoch 0.11776885986328126
+        Epoch  120  loss  1.4604518146580094 correct 48 Time per epoch 0.2018970251083374
+        Epoch  130  loss  1.0012174708939476 correct 49 Time per epoch 0.12511012554168702
+        Epoch  140  loss  0.46013293933984245 correct 49 Time per epoch 0.11060826778411866
+        Epoch  150  loss  1.5640321819505851 correct 49 Time per epoch 0.10989663600921631
+        Epoch  160  loss  0.4776525076228509 correct 48 Time per epoch 0.11024856567382812
+        Epoch  170  loss  0.5219268148694662 correct 50 Time per epoch 0.10896446704864501
+        Epoch  180  loss  1.9039126853449382 correct 48 Time per epoch 0.10982873439788818
+        Epoch  190  loss  2.651305045391856 correct 46 Time per epoch 0.11057426929473876
+        Epoch  200  loss  0.21443530289773122 correct 47 Time per epoch 0.11156687736511231
+        Epoch  210  loss  0.8028541093197802 correct 49 Time per epoch 0.11119260787963867
+        Epoch  220  loss  0.247567803453427 correct 49 Time per epoch 0.1933891534805298
+        Epoch  230  loss  0.9880156754923732 correct 49 Time per epoch 0.14403142929077148
+        Epoch  240  loss  0.5045651004385868 correct 48 Time per epoch 0.11205062866210938
+        Epoch  250  loss  0.36031219207861975 correct 49 Time per epoch 0.10969560146331787
+        Epoch  260  loss  0.4058905151236129 correct 49 Time per epoch 0.12019131183624268
+        Epoch  270  loss  0.6611211506402405 correct 50 Time per epoch 0.11002864837646484
+        Epoch  280  loss  0.8141287485185503 correct 49 Time per epoch 0.10982601642608643
+        Epoch  290  loss  0.37206560607705824 correct 47 Time per epoch 0.11095519065856933
+        Epoch  300  loss  0.31264022949534387 correct 50 Time per epoch 0.10984270572662354
+        Epoch  310  loss  2.3265267659102475 correct 47 Time per epoch 0.1095996618270874
+        Epoch  320  loss  3.3183812978696006 correct 48 Time per epoch 0.18856408596038818
+        Epoch  330  loss  0.5566749662574594 correct 49 Time per epoch 0.14541981220245362
+        Epoch  340  loss  0.6451899287347702 correct 49 Time per epoch 0.10907857418060303
+        Epoch  350  loss  0.7620634570908436 correct 49 Time per epoch 0.1096238374710083
+        Epoch  360  loss  1.0949108440881876 correct 48 Time per epoch 0.10984199047088623
+        Epoch  370  loss  1.164550791590681 correct 50 Time per epoch 0.1108816385269165
+        Epoch  380  loss  0.8764573431935663 correct 49 Time per epoch 0.10905251502990723
+        Epoch  390  loss  0.16546967803650747 correct 49 Time per epoch 0.10902657508850097
+        Epoch  400  loss  1.135167294115634 correct 50 Time per epoch 0.10967147350311279
+        Epoch  410  loss  0.42901456007970606 correct 50 Time per epoch 0.10937027931213379
+        Epoch  420  loss  0.04380896140439232 correct 49 Time per epoch 0.16070556640625
+        Epoch  430  loss  0.14562949286234814 correct 49 Time per epoch 0.17720882892608641
+        Epoch  440  loss  0.3200063404653361 correct 50 Time per epoch 0.10823979377746581
+        Epoch  450  loss  0.2903542998082129 correct 50 Time per epoch 0.10912513732910156
+        Epoch  460  loss  0.7944141668323299 correct 50 Time per epoch 0.11001882553100586
+        Epoch  470  loss  1.0851101437286794 correct 49 Time per epoch 0.10805928707122803
+        Epoch  480  loss  0.3666256340905247 correct 50 Time per epoch 0.10782449245452881
+        Epoch  490  loss  0.24195862283988362 correct 49 Time per epoch 0.11262617111206055
    ```
 ## Log for GPU, Hidden=100, Dataset=Simple, Rate=0.05
 ```bash
@@ -517,56 +517,56 @@ The graph for the comparation between Cuda Implementation and naive operations.
    ```
 
    ```bash
-        Epoch  0  loss  6.481937763055415 correct 39 Time per epoch 0.407978892326355
-        Epoch  10  loss  2.7783638238402455 correct 48 Time per epoch 1.6973078012466432
-        Epoch  20  loss  1.0816036561063862 correct 49 Time per epoch 1.646232008934021
-        Epoch  30  loss  0.986209685346125 correct 49 Time per epoch 1.725732398033142
-        Epoch  40  loss  0.7953561445234931 correct 49 Time per epoch 1.6460023880004884
-        Epoch  50  loss  0.7673651858198178 correct 49 Time per epoch 1.644883131980896
-        Epoch  60  loss  0.12338980722029219 correct 50 Time per epoch 1.7300977945327758
-        Epoch  70  loss  0.8333943450898526 correct 50 Time per epoch 1.6368321180343628
-        Epoch  80  loss  0.6669456865557821 correct 50 Time per epoch 1.6784167289733887
-        Epoch  90  loss  0.6832788063552717 correct 50 Time per epoch 1.6867339372634889
-        Epoch  100  loss  0.16385346808941528 correct 50 Time per epoch 1.6686639070510865
-        Epoch  110  loss  0.22615403537376305 correct 50 Time per epoch 1.7282199621200562
-        Epoch  120  loss  0.6834386563126376 correct 50 Time per epoch 1.6581048488616943
-        Epoch  130  loss  0.14723125203196755 correct 50 Time per epoch 1.6514455318450927
-        Epoch  140  loss  0.04766557836932199 correct 50 Time per epoch 1.7182116746902465
-        Epoch  150  loss  0.12625481614669878 correct 50 Time per epoch 1.634512233734131
-        Epoch  160  loss  0.15092615527917652 correct 50 Time per epoch 1.6575533866882324
-        Epoch  170  loss  0.26090173967241853 correct 50 Time per epoch 1.709930658340454
-        Epoch  180  loss  0.096137494114446 correct 50 Time per epoch 1.6487049818038941
-        Epoch  190  loss  0.09586195533021093 correct 50 Time per epoch 1.7170356512069702
-        Epoch  200  loss  0.5037094074539425 correct 50 Time per epoch 1.6214834213256837
-        Epoch  210  loss  0.4618567660593682 correct 50 Time per epoch 1.657362174987793
-        Epoch  220  loss  0.09981655135537293 correct 50 Time per epoch 1.6847610950469971
-        Epoch  230  loss  0.09734649982862023 correct 50 Time per epoch 1.6181921720504762
-        Epoch  240  loss  0.06743315653177287 correct 50 Time per epoch 1.6307124614715576
-        Epoch  250  loss  0.44291893673776295 correct 50 Time per epoch 1.7008199214935302
-        Epoch  260  loss  0.4202826488124952 correct 50 Time per epoch 1.6463300943374635
-        Epoch  270  loss  0.396511118303373 correct 50 Time per epoch 1.6581544399261474
-        Epoch  280  loss  0.1917985603428767 correct 50 Time per epoch 1.6934150457382202
-        Epoch  290  loss  0.05907425824555271 correct 50 Time per epoch 1.6317212581634521
-        Epoch  300  loss  0.3870556674702017 correct 50 Time per epoch 1.759246301651001
-        Epoch  310  loss  0.15294605361689856 correct 50 Time per epoch 1.695751714706421
-        Epoch  320  loss  0.25700866354341395 correct 50 Time per epoch 1.6252236127853394
-        Epoch  330  loss  0.007714909901928439 correct 50 Time per epoch 1.717577338218689
-        Epoch  340  loss  0.04721945731791985 correct 50 Time per epoch 1.6425475120544433
-        Epoch  350  loss  0.006292965951411999 correct 50 Time per epoch 1.6623739719390869
-        Epoch  360  loss  0.002311311340800275 correct 50 Time per epoch 1.6760843753814698
-        Epoch  370  loss  0.402144765704951 correct 50 Time per epoch 1.648738646507263
-        Epoch  380  loss  0.10342010055280702 correct 50 Time per epoch 1.7165451288223266
-        Epoch  390  loss  0.03739122234126673 correct 50 Time per epoch 1.6340643167495728
-        Epoch  400  loss  0.005288027628491001 correct 50 Time per epoch 1.7120745658874512
-        Epoch  410  loss  0.2577377294878063 correct 50 Time per epoch 1.7025496244430542
-        Epoch  420  loss  0.04441809465501527 correct 50 Time per epoch 1.636440896987915
-        Epoch  430  loss  0.02937640852519877 correct 50 Time per epoch 1.6487253665924073
-        Epoch  440  loss  0.03441096443892534 correct 50 Time per epoch 1.71208758354187
-        Epoch  450  loss  0.0023742632090897682 correct 50 Time per epoch 1.6279669284820557
-        Epoch  460  loss  0.043143722548246874 correct 50 Time per epoch 1.6286793231964112
-        Epoch  470  loss  0.22760163236245928 correct 50 Time per epoch 1.6977510452270508
-        Epoch  480  loss  0.006437988702337798 correct 50 Time per epoch 1.620657777786255
-        Epoch  490  loss  0.2815465536357415 correct 50 Time per epoch 1.6278005599975587
+        Epoch  0  loss  4.231057618503737 correct 40 Time per epoch 0.4488811016082764
+        Epoch  10  loss  0.8467802908955622 correct 49 Time per epoch 1.5690074920654298
+        Epoch  20  loss  1.6482978034940654 correct 48 Time per epoch 1.5706833124160766
+        Epoch  30  loss  0.6324838504066655 correct 48 Time per epoch 1.642581057548523
+        Epoch  40  loss  0.8950996673174823 correct 49 Time per epoch 1.5805742502212525
+        Epoch  50  loss  0.557809176628955 correct 48 Time per epoch 1.570874238014221
+        Epoch  60  loss  1.3102887662350673 correct 50 Time per epoch 1.6063580989837647
+        Epoch  70  loss  1.697801879824845 correct 48 Time per epoch 1.6199917793273926
+        Epoch  80  loss  0.08106413440341503 correct 48 Time per epoch 1.5719878435134889
+        Epoch  90  loss  0.4067537828134001 correct 48 Time per epoch 1.5644217252731323
+        Epoch  100  loss  0.0742427889841448 correct 50 Time per epoch 1.6503339767456056
+        Epoch  110  loss  0.4756091691101141 correct 49 Time per epoch 1.6955562353134155
+        Epoch  120  loss  1.3418731025636523 correct 49 Time per epoch 1.5934258222579956
+        Epoch  130  loss  0.5380740192756103 correct 49 Time per epoch 1.6679628849029542
+        Epoch  140  loss  0.012924391166384386 correct 49 Time per epoch 1.5774704456329345
+        Epoch  150  loss  0.007138768457189043 correct 47 Time per epoch 1.5773017406463623
+        Epoch  160  loss  0.1521845876640417 correct 50 Time per epoch 1.6427552938461303
+        Epoch  170  loss  0.06101198209403101 correct 50 Time per epoch 1.576206588745117
+        Epoch  180  loss  0.36331552958001045 correct 49 Time per epoch 1.5633602857589721
+        Epoch  190  loss  0.6858176067364078 correct 50 Time per epoch 1.5948326349258424
+        Epoch  200  loss  0.8743589780061779 correct 48 Time per epoch 1.6196994304656982
+        Epoch  210  loss  0.9137573520419653 correct 50 Time per epoch 1.5781194925308228
+        Epoch  220  loss  0.12973097008031595 correct 50 Time per epoch 1.5659207344055175
+        Epoch  230  loss  0.333473533519198 correct 49 Time per epoch 1.6490115165710448
+        Epoch  240  loss  0.5801070481921121 correct 49 Time per epoch 1.5623791217803955
+        Epoch  250  loss  0.44292662517255305 correct 49 Time per epoch 1.5688508749008179
+        Epoch  260  loss  1.2806590539121183 correct 50 Time per epoch 1.6387576341629029
+        Epoch  270  loss  0.7524215291097837 correct 50 Time per epoch 1.5839954614639282
+        Epoch  280  loss  0.659093157008466 correct 50 Time per epoch 1.5667675018310547
+        Epoch  290  loss  0.08920144568287817 correct 50 Time per epoch 1.5662221670150758
+        Epoch  300  loss  1.6115410218755684 correct 48 Time per epoch 1.743427538871765
+        Epoch  310  loss  0.86187292769938 correct 50 Time per epoch 1.5690655708312988
+        Epoch  320  loss  0.5156947497816096 correct 49 Time per epoch 1.5733680963516234
+        Epoch  330  loss  0.5976275455953565 correct 49 Time per epoch 1.6447987794876098
+        Epoch  340  loss  0.11143267311434368 correct 49 Time per epoch 1.5705573797225951
+        Epoch  350  loss  0.4709308173535459 correct 49 Time per epoch 1.5632790327072144
+        Epoch  360  loss  1.7302280438197948 correct 48 Time per epoch 1.5826247930526733
+        Epoch  370  loss  1.135732244371917 correct 50 Time per epoch 1.631567358970642
+        Epoch  380  loss  0.7934008748515493 correct 49 Time per epoch 1.5881070852279664
+        Epoch  390  loss  0.7718463037146869 correct 50 Time per epoch 1.5788071393966674
+        Epoch  400  loss  1.6858438734811 correct 48 Time per epoch 1.660209321975708
+        Epoch  410  loss  0.16169846891747558 correct 49 Time per epoch 1.5730446815490722
+        Epoch  420  loss  1.1804958734110034 correct 50 Time per epoch 1.5614545345306396
+        Epoch  430  loss  0.006436953273244205 correct 50 Time per epoch 1.618458914756775
+        Epoch  440  loss  0.5896515584878574 correct 50 Time per epoch 1.5990609169006347
+        Epoch  450  loss  0.23801012726541856 correct 50 Time per epoch 1.5805660724639892
+        Epoch  460  loss  0.20424528272422537 correct 50 Time per epoch 1.5661282777786254
+        Epoch  470  loss  0.5736815671557478 correct 49 Time per epoch 1.647271203994751
+        Epoch  480  loss  0.025648743403433344 correct 49 Time per epoch 1.5685143232345582
+        Epoch  490  loss  0.4852364551562155 correct 50 Time per epoch 1.566480803489685
 ```
 ## Log for CPU, Hidden=100, Dataset=Simple, Rate=0.05
 ```bash
@@ -574,56 +574,56 @@ The graph for the comparation between Cuda Implementation and naive operations.
    ```
 
    ```bash
-        Epoch  0  loss  4.072993020474098 correct 46 Time per epoch 1.821043109893799
-        Epoch  10  loss  2.8417578866380286 correct 46 Time per epoch 0.11979763507843018
-        Epoch  20  loss  0.9534351896594562 correct 48 Time per epoch 0.11746294498443603
-        Epoch  30  loss  0.5169770608415106 correct 48 Time per epoch 0.11360929012298585
-        Epoch  40  loss  2.0495912637027742 correct 47 Time per epoch 0.11644368171691895
-        Epoch  50  loss  0.6144947794805771 correct 47 Time per epoch 0.11601006984710693
-        Epoch  60  loss  1.7388608735493079 correct 47 Time per epoch 0.18784208297729493
-        Epoch  70  loss  1.1724007059865589 correct 47 Time per epoch 0.16030232906341552
-        Epoch  80  loss  2.972880481227632 correct 49 Time per epoch 0.11891570091247558
-        Epoch  90  loss  1.4654272735465166 correct 48 Time per epoch 0.12147533893585205
-        Epoch  100  loss  0.43477396195301027 correct 48 Time per epoch 0.11659362316131591
-        Epoch  110  loss  0.2175450620821583 correct 49 Time per epoch 0.11808733940124512
-        Epoch  120  loss  0.25516654394823984 correct 49 Time per epoch 0.11551165580749512
-        Epoch  130  loss  0.9605996435978612 correct 49 Time per epoch 0.15984010696411133
-        Epoch  140  loss  0.9896400725326358 correct 48 Time per epoch 0.11587059497833252
-        Epoch  150  loss  1.7619590495680257 correct 47 Time per epoch 0.15662240982055664
-        Epoch  160  loss  1.333117719737331 correct 48 Time per epoch 0.1966404676437378
-        Epoch  170  loss  0.029819988544924774 correct 49 Time per epoch 0.11687407493591309
-        Epoch  180  loss  1.6243476538518842 correct 49 Time per epoch 0.12033782005310059
-        Epoch  190  loss  0.16143745710509017 correct 48 Time per epoch 0.11686105728149414
-        Epoch  200  loss  0.7241263642060928 correct 49 Time per epoch 0.11746079921722412
-        Epoch  210  loss  0.0027542869472177685 correct 49 Time per epoch 0.11815938949584961
-        Epoch  220  loss  0.08520076905991586 correct 49 Time per epoch 0.12468860149383545
-        Epoch  230  loss  0.28983069526545785 correct 49 Time per epoch 0.13358213901519775
-        Epoch  240  loss  1.108315974326822 correct 49 Time per epoch 0.11897244453430175
-        Epoch  250  loss  0.13724821280375488 correct 49 Time per epoch 0.21983985900878905
-        Epoch  260  loss  0.290325780391262 correct 49 Time per epoch 0.1537280797958374
-        Epoch  270  loss  1.2705145980103114 correct 49 Time per epoch 0.1318354606628418
-        Epoch  280  loss  1.3032682808649576 correct 48 Time per epoch 0.1152001142501831
-        Epoch  290  loss  2.1621838828338382 correct 49 Time per epoch 0.1150890588760376
-        Epoch  300  loss  0.5567366486986053 correct 49 Time per epoch 0.14057817459106445
-        Epoch  310  loss  0.18852926850184362 correct 49 Time per epoch 0.1165238857269287
-        Epoch  320  loss  0.8659943781062481 correct 49 Time per epoch 0.1178093671798706
-        Epoch  330  loss  0.2237755699552302 correct 49 Time per epoch 0.15357627868652343
-        Epoch  340  loss  0.5562096310196353 correct 49 Time per epoch 0.2553840160369873
-        Epoch  350  loss  0.2948144202740538 correct 49 Time per epoch 0.11846275329589843
-        Epoch  360  loss  1.8988081448932967 correct 48 Time per epoch 0.12019689083099365
-        Epoch  370  loss  0.5670791128016917 correct 49 Time per epoch 0.1173095464706421
-        Epoch  380  loss  1.461336990323139 correct 49 Time per epoch 0.1184088945388794
-        Epoch  390  loss  0.03353737848822169 correct 49 Time per epoch 0.11715047359466553
-        Epoch  400  loss  0.6752423989473538 correct 49 Time per epoch 0.12100212574005127
-        Epoch  410  loss  0.1696513306973005 correct 49 Time per epoch 0.1223360538482666
-        Epoch  420  loss  0.005829809499994377 correct 47 Time per epoch 0.11998207569122314
-        Epoch  430  loss  1.9659014345514274 correct 48 Time per epoch 0.18945207595825195
-        Epoch  440  loss  1.0327033992391215 correct 49 Time per epoch 0.1649810791015625
-        Epoch  450  loss  2.6409182244951306 correct 48 Time per epoch 0.11606917381286622
-        Epoch  460  loss  0.19311624694023186 correct 49 Time per epoch 0.11735038757324219
-        Epoch  470  loss  0.44435388749396537 correct 49 Time per epoch 0.11677155494689942
-        Epoch  480  loss  0.6983933681193084 correct 49 Time per epoch 0.11730124950408935
-        Epoch  490  loss  0.0015200086104271218 correct 49 Time per epoch 0.11563563346862793
+        Epoch  0  loss  4.7964597120985655 correct 45 Time per epoch 1.4510001420974732
+        Epoch  10  loss  1.843893697153623 correct 49 Time per epoch 0.18239452838897705
+        Epoch  20  loss  1.1800711870149345 correct 47 Time per epoch 0.15107412338256837
+        Epoch  30  loss  1.1379222704817513 correct 49 Time per epoch 0.11080653667449951
+        Epoch  40  loss  1.5238688027902942 correct 50 Time per epoch 0.1107985258102417
+        Epoch  50  loss  1.0257448933380902 correct 49 Time per epoch 0.11265122890472412
+        Epoch  60  loss  1.3678295992416851 correct 50 Time per epoch 0.11178324222564698
+        Epoch  70  loss  0.6147506460680406 correct 49 Time per epoch 0.11113805770874023
+        Epoch  80  loss  1.330776877652118 correct 50 Time per epoch 0.11076166629791259
+        Epoch  90  loss  0.30768964966024254 correct 50 Time per epoch 0.11039502620697021
+        Epoch  100  loss  1.0228521731630231 correct 50 Time per epoch 0.11044423580169678
+        Epoch  110  loss  0.22464174361273043 correct 50 Time per epoch 0.17132461071014404
+        Epoch  120  loss  2.1040612290873737 correct 47 Time per epoch 0.17105562686920167
+        Epoch  130  loss  0.5359279796223502 correct 50 Time per epoch 0.11143200397491455
+        Epoch  140  loss  0.3934004666180992 correct 49 Time per epoch 0.11094987392425537
+        Epoch  150  loss  0.9526635705044021 correct 49 Time per epoch 0.11008434295654297
+        Epoch  160  loss  0.6443498056264325 correct 49 Time per epoch 0.11074340343475342
+        Epoch  170  loss  0.9802280033170013 correct 50 Time per epoch 0.11117870807647705
+        Epoch  180  loss  0.7189045145327252 correct 50 Time per epoch 0.10961849689483642
+        Epoch  190  loss  1.5098887443018265 correct 50 Time per epoch 0.11025395393371581
+        Epoch  200  loss  0.0014299828378507374 correct 50 Time per epoch 0.1103811502456665
+        Epoch  210  loss  0.2593636990953903 correct 50 Time per epoch 0.14995067119598388
+        Epoch  220  loss  0.8668796820361435 correct 50 Time per epoch 0.189056134223938
+        Epoch  230  loss  0.20065615357066824 correct 49 Time per epoch 0.11216158866882324
+        Epoch  240  loss  0.9751354778464866 correct 50 Time per epoch 0.10978918075561524
+        Epoch  250  loss  0.051120279881150726 correct 50 Time per epoch 0.11131904125213624
+        Epoch  260  loss  0.0297672604690793 correct 50 Time per epoch 0.11813881397247314
+        Epoch  270  loss  1.0504312831647271 correct 49 Time per epoch 0.10984952449798584
+        Epoch  280  loss  0.4809041622152252 correct 50 Time per epoch 0.10946667194366455
+        Epoch  290  loss  0.19378936222149476 correct 50 Time per epoch 0.11000027656555175
+        Epoch  300  loss  0.22538555097529747 correct 50 Time per epoch 0.11441235542297364
+        Epoch  310  loss  1.308985161962895 correct 49 Time per epoch 0.1533799171447754
+        Epoch  320  loss  0.0125820090077368 correct 50 Time per epoch 0.1890047788619995
+        Epoch  330  loss  0.4738793137849225 correct 50 Time per epoch 0.10994317531585693
+        Epoch  340  loss  0.33605274138434077 correct 50 Time per epoch 0.11056420803070069
+        Epoch  350  loss  0.3870854307952717 correct 50 Time per epoch 0.10993781089782714
+        Epoch  360  loss  1.0214881093035832 correct 49 Time per epoch 0.11386642456054688
+        Epoch  370  loss  0.13447224321815573 correct 50 Time per epoch 0.1100649356842041
+        Epoch  380  loss  0.8415821865544987 correct 50 Time per epoch 0.11104109287261962
+        Epoch  390  loss  0.2991686170031502 correct 50 Time per epoch 0.1113133430480957
+        Epoch  400  loss  0.025445227397062037 correct 49 Time per epoch 0.10999495983123779
+        Epoch  410  loss  0.4636795495992929 correct 50 Time per epoch 0.1456385850906372
+        Epoch  420  loss  0.28358573345547494 correct 50 Time per epoch 0.1933736801147461
+        Epoch  430  loss  0.31946395312499154 correct 50 Time per epoch 0.10944614410400391
+        Epoch  440  loss  0.08558653286112176 correct 50 Time per epoch 0.1090163230895996
+        Epoch  450  loss  0.2065363939060571 correct 50 Time per epoch 0.108502197265625
+        Epoch  460  loss  0.06460771672402452 correct 50 Time per epoch 0.11180846691131592
+        Epoch  470  loss  0.5052649667243666 correct 50 Time per epoch 0.1108548402786255
+        Epoch  480  loss  0.1963802396358422 correct 50 Time per epoch 0.11024737358093262
+        Epoch  490  loss  0.28835663129626127 correct 50 Time per epoch 0.1095313310623169
 ```
 ## Log for GPU, Hidden=100, Dataset=Xor, Rate=0.05
 ```bash
@@ -631,56 +631,56 @@ The graph for the comparation between Cuda Implementation and naive operations.
    ```
 
    ```bash
-        Epoch  0  loss  6.280394010416758 correct 27 Time per epoch 0.4752765417098999
-        Epoch  10  loss  4.54587621740805 correct 43 Time per epoch 1.6597156763076781
-        Epoch  20  loss  5.696152755112369 correct 44 Time per epoch 1.6388537168502808
-        Epoch  30  loss  4.7690138755906375 correct 47 Time per epoch 1.776206660270691
-        Epoch  40  loss  4.3878708626221155 correct 47 Time per epoch 1.6316620349884032
-        Epoch  50  loss  1.440041113625051 correct 47 Time per epoch 1.695201563835144
-        Epoch  60  loss  2.7092722870949597 correct 47 Time per epoch 1.6569730281829833
-        Epoch  70  loss  3.504960246264046 correct 47 Time per epoch 1.6237014770507812
-        Epoch  80  loss  1.9734175857999503 correct 47 Time per epoch 1.724666428565979
-        Epoch  90  loss  1.8998279361511983 correct 47 Time per epoch 1.6317059993743896
-        Epoch  100  loss  1.9546704568559972 correct 48 Time per epoch 1.6304309606552123
-        Epoch  110  loss  2.0823363968192625 correct 49 Time per epoch 1.7225021362304687
-        Epoch  120  loss  1.522797453870397 correct 50 Time per epoch 1.6637585639953614
-        Epoch  130  loss  1.5563294674158006 correct 49 Time per epoch 1.6589678525924683
-        Epoch  140  loss  2.3356967576579954 correct 49 Time per epoch 1.7435626268386841
-        Epoch  150  loss  1.4486449502040997 correct 49 Time per epoch 1.682109260559082
-        Epoch  160  loss  1.3332770018910807 correct 49 Time per epoch 1.6654359817504882
-        Epoch  170  loss  1.0197150361371938 correct 50 Time per epoch 1.7630751132965088
-        Epoch  180  loss  0.856274390901779 correct 50 Time per epoch 1.6574673652648926
-        Epoch  190  loss  0.8247612216628917 correct 50 Time per epoch 1.6756616353988647
-        Epoch  200  loss  0.5998356273262913 correct 50 Time per epoch 1.6954685926437378
-        Epoch  210  loss  1.2734275449865227 correct 50 Time per epoch 1.7357024431228638
-        Epoch  220  loss  0.8724950949226408 correct 50 Time per epoch 1.7304427862167358
-        Epoch  230  loss  1.4340386425434652 correct 50 Time per epoch 1.6501287460327148
-        Epoch  240  loss  0.8234807492644918 correct 50 Time per epoch 1.6598962783813476
-        Epoch  250  loss  0.4140581992810794 correct 50 Time per epoch 1.7253230571746827
-        Epoch  260  loss  0.7995631873155827 correct 50 Time per epoch 1.6532833099365234
-        Epoch  270  loss  0.5384153162146605 correct 50 Time per epoch 1.6363509178161622
-        Epoch  280  loss  0.7807404948686034 correct 50 Time per epoch 1.729175066947937
-        Epoch  290  loss  0.08110074482053535 correct 50 Time per epoch 1.6606518507003785
-        Epoch  300  loss  0.32281537856608444 correct 50 Time per epoch 1.6889002799987793
-        Epoch  310  loss  0.5771569695951806 correct 50 Time per epoch 1.7311749935150147
-        Epoch  320  loss  0.350838994296919 correct 50 Time per epoch 1.6769214153289795
-        Epoch  330  loss  0.47394295691354243 correct 50 Time per epoch 1.7438384771347046
-        Epoch  340  loss  0.27919117336073473 correct 50 Time per epoch 1.6917418956756591
-        Epoch  350  loss  0.49845938704009907 correct 50 Time per epoch 1.67563316822052
-        Epoch  360  loss  0.4089068655361512 correct 50 Time per epoch 1.7808459281921387
-        Epoch  370  loss  0.5570826088473483 correct 50 Time per epoch 1.6767160415649414
-        Epoch  380  loss  0.3184246198334393 correct 50 Time per epoch 1.739782953262329
-        Epoch  390  loss  0.7447183123656521 correct 50 Time per epoch 1.6881900310516358
-        Epoch  400  loss  0.22381238941523887 correct 50 Time per epoch 1.7551891565322877
-        Epoch  410  loss  0.14223622537157649 correct 50 Time per epoch 1.7358999252319336
-        Epoch  420  loss  0.4529982840736022 correct 50 Time per epoch 1.650507926940918
-        Epoch  430  loss  0.22097922003217196 correct 50 Time per epoch 1.7256225109100343
-        Epoch  440  loss  0.07050433179672828 correct 50 Time per epoch 1.6815274715423585
-        Epoch  450  loss  0.6791687507084176 correct 50 Time per epoch 1.6609324216842651
-        Epoch  460  loss  0.4586662998718075 correct 50 Time per epoch 1.7471157550811767
-        Epoch  470  loss  0.10269269854401873 correct 50 Time per epoch 1.6757093906402587
-        Epoch  480  loss  0.3285267750070468 correct 50 Time per epoch 1.699565625190735
-        Epoch  490  loss  0.3311483256589699 correct 50 Time per epoch 1.7181056499481202
+        Epoch  0  loss  7.357198650204386 correct 38 Time per epoch 0.4482653856277466
+        Epoch  10  loss  4.98915897964179 correct 45 Time per epoch 1.5824486494064331
+        Epoch  20  loss  2.1976805743230505 correct 46 Time per epoch 1.5897902011871339
+        Epoch  30  loss  2.9004835676412393 correct 45 Time per epoch 1.6372377634048463
+        Epoch  40  loss  3.251250887754409 correct 47 Time per epoch 1.5820262908935547
+        Epoch  50  loss  1.4796033739767882 correct 46 Time per epoch 1.5812280178070068
+        Epoch  60  loss  4.639377154234314 correct 46 Time per epoch 1.6576990842819215
+        Epoch  70  loss  2.078155600936099 correct 47 Time per epoch 1.5703636407852173
+        Epoch  80  loss  1.5316967925777674 correct 48 Time per epoch 1.5811646938323975
+        Epoch  90  loss  0.5446958954844076 correct 48 Time per epoch 1.6475631952285767
+        Epoch  100  loss  2.449873778870412 correct 47 Time per epoch 1.590339970588684
+        Epoch  110  loss  0.38874546992140546 correct 48 Time per epoch 1.5709888696670533
+        Epoch  120  loss  1.7194360639369466 correct 49 Time per epoch 1.5945136070251464
+        Epoch  130  loss  1.8249991870734452 correct 49 Time per epoch 1.636206293106079
+        Epoch  140  loss  0.5861702383672712 correct 48 Time per epoch 1.6637208700180053
+        Epoch  150  loss  0.3929063224952324 correct 49 Time per epoch 1.570684552192688
+        Epoch  160  loss  2.1724459667772043 correct 48 Time per epoch 1.6559552669525146
+        Epoch  170  loss  0.47417269001601015 correct 49 Time per epoch 1.579501748085022
+        Epoch  180  loss  1.5813246868671698 correct 49 Time per epoch 1.5714139223098755
+        Epoch  190  loss  1.2426094233540756 correct 49 Time per epoch 1.6513227462768554
+        Epoch  200  loss  1.739378840943092 correct 49 Time per epoch 1.5774714469909668
+        Epoch  210  loss  2.439928648114148 correct 49 Time per epoch 1.576958131790161
+        Epoch  220  loss  0.603007004008531 correct 50 Time per epoch 1.5986249685287475
+        Epoch  230  loss  1.1203620081816774 correct 49 Time per epoch 1.6287386178970338
+        Epoch  240  loss  0.627594984812291 correct 49 Time per epoch 1.5701635837554933
+        Epoch  250  loss  0.9752555552534153 correct 50 Time per epoch 1.5766926288604737
+        Epoch  260  loss  0.31317071211636416 correct 50 Time per epoch 1.6579359769821167
+        Epoch  270  loss  0.5065025871551336 correct 49 Time per epoch 1.5747862815856934
+        Epoch  280  loss  0.7243142947917529 correct 50 Time per epoch 1.5748349666595458
+        Epoch  290  loss  0.9050876533395467 correct 49 Time per epoch 1.6506150722503663
+        Epoch  300  loss  0.519815417007563 correct 49 Time per epoch 1.592959475517273
+        Epoch  310  loss  1.704718279594221 correct 50 Time per epoch 1.5740541458129882
+        Epoch  320  loss  0.7543478790454056 correct 49 Time per epoch 1.5653656721115112
+        Epoch  330  loss  0.19069303999732004 correct 50 Time per epoch 1.6585341691970825
+        Epoch  340  loss  0.991318715116128 correct 50 Time per epoch 1.6590985298156737
+        Epoch  350  loss  1.2631215955057693 correct 50 Time per epoch 1.5746696710586547
+        Epoch  360  loss  0.6695773459732339 correct 49 Time per epoch 1.6562577486038208
+        Epoch  370  loss  0.2527241426419322 correct 49 Time per epoch 1.5721393346786499
+        Epoch  380  loss  0.43344854133060023 correct 49 Time per epoch 1.5791359901428224
+        Epoch  390  loss  0.10489459731722195 correct 50 Time per epoch 1.650852632522583
+        Epoch  400  loss  0.10007497312113778 correct 49 Time per epoch 1.5767351388931274
+        Epoch  410  loss  1.3404430869320194 correct 50 Time per epoch 1.5691748142242432
+        Epoch  420  loss  0.41423757348346174 correct 50 Time per epoch 1.5768578767776489
+        Epoch  430  loss  0.6058951313524595 correct 50 Time per epoch 1.6487502336502076
+        Epoch  440  loss  0.9870924226237183 correct 49 Time per epoch 1.5709683418273925
+        Epoch  450  loss  0.03946025383127734 correct 49 Time per epoch 1.5713172435760498
+        Epoch  460  loss  0.23711322278759045 correct 50 Time per epoch 1.6708690404891968
+        Epoch  470  loss  0.101533323597164 correct 50 Time per epoch 1.5742628812789916
+        Epoch  480  loss  0.8063855624185929 correct 50 Time per epoch 1.5875962972640991
+        Epoch  490  loss  0.04363320153761432 correct 50 Time per epoch 1.6209076166152954
 ```
 ## Log for CPU, Hidden=100, Dataset=Xor, Rate=0.05
 ```bash
@@ -688,56 +688,56 @@ The graph for the comparation between Cuda Implementation and naive operations.
    ```
 
    ```bash
-        Epoch  0  loss  7.833886601666596 correct 30 Time per epoch 1.5229301929473877
-        Epoch  10  loss  5.606696817149911 correct 42 Time per epoch 0.11924517154693604
-        Epoch  20  loss  6.68105608872518 correct 41 Time per epoch 0.11962106227874755
-        Epoch  30  loss  4.251635905327726 correct 44 Time per epoch 0.15417258739471434
-        Epoch  40  loss  4.921150473005961 correct 41 Time per epoch 0.19574248790740967
-        Epoch  50  loss  4.882515965434023 correct 45 Time per epoch 0.11870090961456299
-        Epoch  60  loss  2.1268739909296213 correct 45 Time per epoch 0.11768028736114503
-        Epoch  70  loss  2.918286314982733 correct 46 Time per epoch 0.12138838768005371
-        Epoch  80  loss  2.2431118076475496 correct 45 Time per epoch 0.11948721408843994
-        Epoch  90  loss  3.7745697115512544 correct 45 Time per epoch 0.11835236549377441
-        Epoch  100  loss  2.398740677853622 correct 48 Time per epoch 0.11851356029510499
-        Epoch  110  loss  1.7489450976167875 correct 48 Time per epoch 0.11992745399475098
-        Epoch  120  loss  2.1148395267343036 correct 48 Time per epoch 0.11896333694458008
-        Epoch  130  loss  0.5012782866341366 correct 47 Time per epoch 0.1995089054107666
-        Epoch  140  loss  1.1999808955245561 correct 48 Time per epoch 0.1437612771987915
-        Epoch  150  loss  2.8088040359218054 correct 48 Time per epoch 0.12161428928375244
-        Epoch  160  loss  1.1858969005741438 correct 48 Time per epoch 0.12199544906616211
-        Epoch  170  loss  1.2750897621368733 correct 49 Time per epoch 0.11999475955963135
-        Epoch  180  loss  1.1210966570964789 correct 49 Time per epoch 0.1210564136505127
-        Epoch  190  loss  2.86253503473177 correct 48 Time per epoch 0.12016117572784424
-        Epoch  200  loss  0.854128623021924 correct 48 Time per epoch 0.12246372699737548
-        Epoch  210  loss  0.7657964072352205 correct 48 Time per epoch 0.12391691207885742
-        Epoch  220  loss  0.5123072098702285 correct 48 Time per epoch 0.19438583850860597
-        Epoch  230  loss  1.3270099685805061 correct 50 Time per epoch 0.16785409450531005
-        Epoch  240  loss  1.7393459438811378 correct 50 Time per epoch 0.12720136642456054
-        Epoch  250  loss  0.39245090862845233 correct 49 Time per epoch 0.1218914270401001
-        Epoch  260  loss  0.9229339990694443 correct 48 Time per epoch 0.13014373779296876
-        Epoch  270  loss  1.78313719117919 correct 48 Time per epoch 0.11975512504577637
-        Epoch  280  loss  0.17859485757681123 correct 49 Time per epoch 0.12410197257995606
-        Epoch  290  loss  0.4773990107969874 correct 49 Time per epoch 0.11937918663024902
-        Epoch  300  loss  0.744352622998539 correct 50 Time per epoch 0.12117195129394531
-        Epoch  310  loss  0.8198126234629748 correct 49 Time per epoch 0.1822735548019409
-        Epoch  320  loss  0.26341487242022893 correct 48 Time per epoch 0.1757634162902832
-        Epoch  330  loss  0.4188268289417224 correct 49 Time per epoch 0.12256486415863037
-        Epoch  340  loss  0.745941529409921 correct 49 Time per epoch 0.11639883518218994
-        Epoch  350  loss  1.3039709730467781 correct 50 Time per epoch 0.1174548625946045
-        Epoch  360  loss  0.3972008438457014 correct 48 Time per epoch 0.1175736665725708
-        Epoch  370  loss  1.596022414590836 correct 49 Time per epoch 0.11665129661560059
-        Epoch  380  loss  1.0420417591709863 correct 49 Time per epoch 0.11793045997619629
-        Epoch  390  loss  0.29529385120348417 correct 49 Time per epoch 0.11733434200286866
-        Epoch  400  loss  1.8117382685644077 correct 49 Time per epoch 0.12164540290832519
-        Epoch  410  loss  0.4703789780031911 correct 50 Time per epoch 0.2247083902359009
-        Epoch  420  loss  1.5202468661826536 correct 49 Time per epoch 0.12026774883270264
-        Epoch  430  loss  1.3959784324596949 correct 49 Time per epoch 0.11760983467102051
-        Epoch  440  loss  0.5639214836043898 correct 49 Time per epoch 0.1201460599899292
-        Epoch  450  loss  0.33589337043478684 correct 48 Time per epoch 0.11609315872192383
-        Epoch  460  loss  0.38985212153280335 correct 48 Time per epoch 0.12106122970581054
-        Epoch  470  loss  0.7473232001626022 correct 49 Time per epoch 0.1175995111465454
-        Epoch  480  loss  0.2275896456521271 correct 49 Time per epoch 0.11702971458435059
-        Epoch  490  loss  0.01898596464758289 correct 49 Time per epoch 0.11677744388580322
+        Epoch  0  loss  6.528275023369353 correct 22 Time per epoch 1.4627237558364867
+        Epoch  10  loss  4.2877176883964925 correct 47 Time per epoch 0.1110661506652832
+        Epoch  20  loss  4.324374417950544 correct 41 Time per epoch 0.11166291236877442
+        Epoch  30  loss  1.7118092404117968 correct 49 Time per epoch 0.11279699802398682
+        Epoch  40  loss  2.050872327632735 correct 49 Time per epoch 0.11217312812805176
+        Epoch  50  loss  1.597773911418098 correct 46 Time per epoch 0.11132428646087647
+        Epoch  60  loss  1.9819400698609726 correct 49 Time per epoch 0.11056866645812988
+        Epoch  70  loss  1.639872900228014 correct 49 Time per epoch 0.11049323081970215
+        Epoch  80  loss  1.181799442978592 correct 49 Time per epoch 0.11202948093414307
+        Epoch  90  loss  1.8767653337925143 correct 49 Time per epoch 0.17596683502197266
+        Epoch  100  loss  0.8371002718860567 correct 49 Time per epoch 0.16111915111541747
+        Epoch  110  loss  0.39023110316073695 correct 50 Time per epoch 0.11271145343780517
+        Epoch  120  loss  0.45715818298824334 correct 49 Time per epoch 0.11169359683990479
+        Epoch  130  loss  1.2340055267279115 correct 50 Time per epoch 0.1110102653503418
+        Epoch  140  loss  0.6103370302286064 correct 50 Time per epoch 0.11323065757751465
+        Epoch  150  loss  1.0901422392690718 correct 50 Time per epoch 0.1114161491394043
+        Epoch  160  loss  0.12445051759086685 correct 49 Time per epoch 0.11085991859436035
+        Epoch  170  loss  0.31381787922736165 correct 50 Time per epoch 0.1123319149017334
+        Epoch  180  loss  0.18691340994488548 correct 50 Time per epoch 0.19444496631622316
+        Epoch  190  loss  0.2447200281343434 correct 50 Time per epoch 0.24259014129638673
+        Epoch  200  loss  0.8053217984854636 correct 50 Time per epoch 0.13876669406890868
+        Epoch  210  loss  0.3099817587087687 correct 50 Time per epoch 0.11080949306488037
+        Epoch  220  loss  1.4113461682469302 correct 50 Time per epoch 0.11123373508453369
+        Epoch  230  loss  0.969516500547963 correct 50 Time per epoch 0.11069614887237549
+        Epoch  240  loss  0.06718547249129793 correct 49 Time per epoch 0.11010541915893554
+        Epoch  250  loss  0.3744387949657912 correct 50 Time per epoch 0.11114580631256103
+        Epoch  260  loss  0.5080310573217296 correct 50 Time per epoch 0.11961197853088379
+        Epoch  270  loss  1.1513708577501705 correct 50 Time per epoch 0.11292452812194824
+        Epoch  280  loss  0.2699568395408089 correct 50 Time per epoch 0.11033556461334229
+        Epoch  290  loss  0.23776245380586208 correct 50 Time per epoch 0.2011582851409912
+        Epoch  300  loss  0.0746719955093508 correct 49 Time per epoch 0.13878445625305175
+        Epoch  310  loss  0.5396445128543039 correct 50 Time per epoch 0.11117193698883057
+        Epoch  320  loss  0.8533089801582873 correct 50 Time per epoch 0.11038179397583008
+        Epoch  330  loss  1.024858339924342 correct 50 Time per epoch 0.11232957839965821
+        Epoch  340  loss  0.18230641260539254 correct 50 Time per epoch 0.1115645170211792
+        Epoch  350  loss  0.5712081763650627 correct 50 Time per epoch 0.11272530555725098
+        Epoch  360  loss  0.6360743500983793 correct 50 Time per epoch 0.11066064834594727
+        Epoch  370  loss  0.16007146144615675 correct 50 Time per epoch 0.10993049144744874
+        Epoch  380  loss  0.22985502798455046 correct 50 Time per epoch 0.10964956283569335
+        Epoch  390  loss  0.33808866647660585 correct 50 Time per epoch 0.18424456119537352
+        Epoch  400  loss  0.19664080338214357 correct 50 Time per epoch 0.15303208827972412
+        Epoch  410  loss  0.5527057703255501 correct 50 Time per epoch 0.10928518772125244
+        Epoch  420  loss  0.02455244434635427 correct 50 Time per epoch 0.1106644868850708
+        Epoch  430  loss  0.4495345732781258 correct 50 Time per epoch 0.11852936744689942
+        Epoch  440  loss  0.45632758259547196 correct 50 Time per epoch 0.11136507987976074
+        Epoch  450  loss  0.10386197237110838 correct 50 Time per epoch 0.11001877784729004
+        Epoch  460  loss  0.4457662423588716 correct 50 Time per epoch 0.11058964729309081
+        Epoch  470  loss  0.08569770107300596 correct 50 Time per epoch 0.11004478931427002
+        Epoch  480  loss  0.30173596987494317 correct 50 Time per epoch 0.11073358058929443
+        Epoch  490  loss  0.1881854680537514 correct 50 Time per epoch 0.1792076826095581
 ```
 ## Log for GPU, Hidden=200, Dataset=Simple, Rate=0.05
 ```bash
@@ -745,56 +745,56 @@ The graph for the comparation between Cuda Implementation and naive operations.
    ```
 
    ```bash
-        Epoch  0  loss  2.5601119825297824 correct 43 Time per epoch 0.47141706943511963
-        Epoch  10  loss  0.3875193316599459 correct 50 Time per epoch 2.0123230695724486
-        Epoch  20  loss  0.2885238931774418 correct 50 Time per epoch 1.8433511018753053
-        Epoch  30  loss  0.3477124336633688 correct 50 Time per epoch 1.7443787336349488
-        Epoch  40  loss  0.1565048763023117 correct 50 Time per epoch 1.8733482360839844
-        Epoch  50  loss  0.17623620256826691 correct 50 Time per epoch 1.74590744972229
-        Epoch  60  loss  0.019831957329596084 correct 50 Time per epoch 1.816489291191101
-        Epoch  70  loss  0.10439441415972953 correct 50 Time per epoch 1.7475043773651122
-        Epoch  80  loss  0.08338225970576824 correct 50 Time per epoch 1.8297606706619263
-        Epoch  90  loss  0.0033090558053899214 correct 50 Time per epoch 1.787989568710327
-        Epoch  100  loss  0.1605880115358843 correct 50 Time per epoch 1.7761601448059081
-        Epoch  110  loss  0.13181051394978918 correct 50 Time per epoch 1.847226619720459
-        Epoch  120  loss  0.0005527584063520456 correct 50 Time per epoch 1.7739270210266114
-        Epoch  130  loss  0.03385889349668325 correct 50 Time per epoch 1.941284465789795
-        Epoch  140  loss  0.07809793754532962 correct 50 Time per epoch 1.7462730884552002
-        Epoch  150  loss  0.05421449757858084 correct 50 Time per epoch 1.8089396238327027
-        Epoch  160  loss  0.07380067164371795 correct 50 Time per epoch 1.7679046869277955
-        Epoch  170  loss  0.055892067295157916 correct 50 Time per epoch 1.747575855255127
-        Epoch  180  loss  0.06526801401685184 correct 50 Time per epoch 1.8322970151901246
-        Epoch  190  loss  0.01719348543372224 correct 50 Time per epoch 1.7359487771987916
-        Epoch  200  loss  0.009741595067736676 correct 50 Time per epoch 1.808492374420166
-        Epoch  210  loss  0.07485484827115735 correct 50 Time per epoch 1.7503846168518067
-        Epoch  220  loss  0.052397090945210535 correct 50 Time per epoch 1.786918544769287
-        Epoch  230  loss  0.008293924847965234 correct 50 Time per epoch 1.7690865039825439
-        Epoch  240  loss  0.023704817131458493 correct 50 Time per epoch 1.7402574062347411
-        Epoch  250  loss  0.03409195763980557 correct 50 Time per epoch 1.8438809156417846
-        Epoch  260  loss  0.044656473839558994 correct 50 Time per epoch 1.7611313581466674
-        Epoch  270  loss  0.003464592622327433 correct 50 Time per epoch 1.845083522796631
-        Epoch  280  loss  0.007668650097872257 correct 50 Time per epoch 1.766694474220276
-        Epoch  290  loss  0.003430450640882463 correct 50 Time per epoch 1.8470298290252685
-        Epoch  300  loss  0.010976191293239871 correct 50 Time per epoch 1.865936827659607
-        Epoch  310  loss  0.007096300004460443 correct 50 Time per epoch 1.8145889520645142
-        Epoch  320  loss  0.054818772272228325 correct 50 Time per epoch 1.7718312978744506
-        Epoch  330  loss  0.006025082876673667 correct 50 Time per epoch 1.7606521844863892
-        Epoch  340  loss  0.05881882741940195 correct 50 Time per epoch 1.839719796180725
-        Epoch  350  loss  0.05874862050911139 correct 50 Time per epoch 1.7404290914535523
-        Epoch  360  loss  0.0030708418274423273 correct 50 Time per epoch 1.8393359661102295
-        Epoch  370  loss  0.033809723082986784 correct 50 Time per epoch 1.7310850620269775
-        Epoch  380  loss  0.010926136295700994 correct 50 Time per epoch 1.7871577739715576
-        Epoch  390  loss  0.0343527745300386 correct 50 Time per epoch 1.773015522956848
-        Epoch  400  loss  0.003725438945055405 correct 50 Time per epoch 1.7370295524597168
-        Epoch  410  loss  0.011246878181417038 correct 50 Time per epoch 1.8175803899765015
-        Epoch  420  loss  0.0193476241068913 correct 50 Time per epoch 1.7394263982772826
-        Epoch  430  loss  0.05253097446593277 correct 50 Time per epoch 1.8454719066619873
-        Epoch  440  loss  0.026622293113952054 correct 50 Time per epoch 1.7558518171310424
-        Epoch  450  loss  0.03564003887282088 correct 50 Time per epoch 1.8065390586853027
-        Epoch  460  loss  0.00020557004568938738 correct 50 Time per epoch 1.7312028884887696
-        Epoch  470  loss  0.022234071313934987 correct 50 Time per epoch 1.7999560832977295
-        Epoch  480  loss  0.03288229174604747 correct 50 Time per epoch 1.8154486179351808
-        Epoch  490  loss  0.00015305609996510392 correct 50 Time per epoch 1.7185826539993285
+        Epoch  0  loss  7.000360093429833 correct 43 Time per epoch 0.3491117000579834
+        Epoch  10  loss  3.775766526274423 correct 43 Time per epoch 1.6753533601760864
+        Epoch  20  loss  0.4885228371957832 correct 45 Time per epoch 1.729252004623413
+        Epoch  30  loss  0.4872548281381251 correct 50 Time per epoch 1.6713150024414063
+        Epoch  40  loss  0.9365585218427813 correct 50 Time per epoch 1.757141351699829
+        Epoch  50  loss  0.8800666177591823 correct 50 Time per epoch 1.658739948272705
+        Epoch  60  loss  1.2337028794483187 correct 50 Time per epoch 1.6615067005157471
+        Epoch  70  loss  0.9998951260407065 correct 50 Time per epoch 1.739526915550232
+        Epoch  80  loss  0.6160068508465498 correct 50 Time per epoch 1.6656420946121215
+        Epoch  90  loss  0.14959700058122263 correct 48 Time per epoch 1.6556017637252807
+        Epoch  100  loss  0.9650618103263872 correct 49 Time per epoch 1.7389044523239137
+        Epoch  110  loss  1.0009910986218675 correct 50 Time per epoch 1.6674356698989867
+        Epoch  120  loss  0.001862541799106978 correct 46 Time per epoch 1.7281122922897338
+        Epoch  130  loss  0.6105513975878184 correct 47 Time per epoch 1.6667046785354613
+        Epoch  140  loss  1.2342749221129032 correct 48 Time per epoch 1.6610356330871583
+        Epoch  150  loss  0.3115650682857444 correct 49 Time per epoch 1.7372191905975343
+        Epoch  160  loss  1.0192190028056882 correct 50 Time per epoch 1.7474852323532104
+        Epoch  170  loss  0.7488148680971483 correct 50 Time per epoch 1.6661609172821046
+        Epoch  180  loss  0.34162930515686135 correct 50 Time per epoch 1.73691885471344
+        Epoch  190  loss  0.5085624737347073 correct 50 Time per epoch 1.654402995109558
+        Epoch  200  loss  0.35635743233124584 correct 50 Time per epoch 1.6527538299560547
+        Epoch  210  loss  0.0027412447387808723 correct 49 Time per epoch 1.7380970478057862
+        Epoch  220  loss  0.5110860491183777 correct 50 Time per epoch 1.648557996749878
+        Epoch  230  loss  0.6135522204946149 correct 50 Time per epoch 1.7002411842346192
+        Epoch  240  loss  0.41265953848899467 correct 50 Time per epoch 1.6890200138092042
+        Epoch  250  loss  0.727802792051781 correct 50 Time per epoch 1.6535060405731201
+        Epoch  260  loss  0.291619919556552 correct 50 Time per epoch 1.7456716060638429
+        Epoch  270  loss  0.9377083411695825 correct 49 Time per epoch 1.6549450397491454
+        Epoch  280  loss  0.07503656665791832 correct 50 Time per epoch 1.653823971748352
+        Epoch  290  loss  0.606209333043264 correct 50 Time per epoch 1.7398022890090943
+        Epoch  300  loss  0.005712076748624993 correct 50 Time per epoch 1.6587799787521362
+        Epoch  310  loss  1.305381885987269 correct 50 Time per epoch 1.663024640083313
+        Epoch  320  loss  7.262454332217169e-05 correct 50 Time per epoch 1.7148625373840332
+        Epoch  330  loss  0.2859040339943481 correct 50 Time per epoch 1.6576553106307983
+        Epoch  340  loss  0.44132882067538715 correct 50 Time per epoch 1.7245872259140014
+        Epoch  350  loss  0.000583242454226611 correct 50 Time per epoch 1.746854591369629
+        Epoch  360  loss  0.22734204775246558 correct 50 Time per epoch 1.645559597015381
+        Epoch  370  loss  0.5344641971716934 correct 49 Time per epoch 1.7346656560897826
+        Epoch  380  loss  0.4915285364830179 correct 50 Time per epoch 1.655346941947937
+        Epoch  390  loss  6.512264483145665e-05 correct 50 Time per epoch 1.674775528907776
+        Epoch  400  loss  0.003437713065598624 correct 50 Time per epoch 1.7150470972061158
+        Epoch  410  loss  0.21421540051874122 correct 50 Time per epoch 1.6459196567535401
+        Epoch  420  loss  0.2587896740875578 correct 50 Time per epoch 1.723518395423889
+        Epoch  430  loss  0.001360230277267349 correct 47 Time per epoch 1.6692610263824463
+        Epoch  440  loss  0.06037201859554331 correct 50 Time per epoch 1.6503085374832154
+        Epoch  450  loss  0.0007078390972143175 correct 50 Time per epoch 1.7316558837890625
+        Epoch  460  loss  0.07356948128335573 correct 50 Time per epoch 1.6542655944824218
+        Epoch  470  loss  1.1509354033448206e-05 correct 50 Time per epoch 1.664808988571167
+        Epoch  480  loss  0.31382458454050094 correct 50 Time per epoch 1.7450776100158691
+        Epoch  490  loss  1.0406085233200262 correct 50 Time per epoch 1.6513777494430542
 ```
 ## Log for CPU, Hidden=200, Dataset=Simple, Rate=0.05
 ```bash
@@ -802,54 +802,54 @@ The graph for the comparation between Cuda Implementation and naive operations.
    ```
 
    ```bash
-        Epoch  0  loss  16.4800989953874 correct 38 Time per epoch 1.5370167016983032
-        Epoch  10  loss  0.39785259655488237 correct 50 Time per epoch 0.2715207576751709
-        Epoch  20  loss  0.12195639885530515 correct 50 Time per epoch 0.3928703784942627
-        Epoch  30  loss  0.31022076830778933 correct 50 Time per epoch 0.2736185312271118
-        Epoch  40  loss  0.05699249132931301 correct 50 Time per epoch 0.2720853090286255
-        Epoch  50  loss  0.24944114057222483 correct 50 Time per epoch 0.27010796070098875
-        Epoch  60  loss  0.3423720385672292 correct 50 Time per epoch 0.38702704906463625
-        Epoch  70  loss  0.061209128318553734 correct 50 Time per epoch 0.27201783657073975
-        Epoch  80  loss  0.10117941396405244 correct 50 Time per epoch 0.2702460527420044
-        Epoch  90  loss  0.17192814735870576 correct 50 Time per epoch 0.2732026815414429
-        Epoch  100  loss  0.11245954938722524 correct 50 Time per epoch 0.37405245304107665
-        Epoch  110  loss  0.23282353038079606 correct 50 Time per epoch 0.2960777997970581
-        Epoch  120  loss  0.050516817206653686 correct 50 Time per epoch 0.27211310863494875
-        Epoch  130  loss  0.003332288271033286 correct 50 Time per epoch 0.2728134632110596
-        Epoch  140  loss  0.10587232868098713 correct 50 Time per epoch 0.33142409324645994
-        Epoch  150  loss  0.00504857351057359 correct 50 Time per epoch 0.33056039810180665
-        Epoch  160  loss  0.01871779328317779 correct 50 Time per epoch 0.27343335151672366
-        Epoch  170  loss  0.004268587579838819 correct 50 Time per epoch 0.2745417833328247
-        Epoch  180  loss  0.06282651635585458 correct 50 Time per epoch 0.30839076042175295
-        Epoch  190  loss  0.05671066324630268 correct 50 Time per epoch 0.3609639883041382
-        Epoch  200  loss  0.10740604736279863 correct 50 Time per epoch 0.27433784008026124
-        Epoch  210  loss  0.13955097890367277 correct 50 Time per epoch 0.2742986917495728
-        Epoch  220  loss  0.09374705062327036 correct 50 Time per epoch 0.27635464668273924
-        Epoch  230  loss  0.030717948041920334 correct 50 Time per epoch 0.3919733762741089
-        Epoch  240  loss  0.048087894154764575 correct 50 Time per epoch 0.273266863822937
-        Epoch  250  loss  0.03872849130572199 correct 50 Time per epoch 0.2725456953048706
-        Epoch  260  loss  0.09725968511892806 correct 50 Time per epoch 0.27871978282928467
-        Epoch  270  loss  0.007223151509706272 correct 50 Time per epoch 0.39563310146331787
-        Epoch  280  loss  0.04388342994757184 correct 50 Time per epoch 0.2689098358154297
-        Epoch  290  loss  0.042873492161255994 correct 50 Time per epoch 0.27824814319610597
-        Epoch  300  loss  0.0006527997643945117 correct 50 Time per epoch 0.2748971223831177
-        Epoch  310  loss  0.05775718892561606 correct 50 Time per epoch 0.39644060134887693
-        Epoch  320  loss  0.000929413386225791 correct 50 Time per epoch 0.2781154870986938
-        Epoch  330  loss  0.01443891498925031 correct 50 Time per epoch 0.27114531993865965
-        Epoch  340  loss  0.028437414376311778 correct 50 Time per epoch 0.27302649021148684
-        Epoch  350  loss  0.009362735585113581 correct 50 Time per epoch 0.3933796644210815
-        Epoch  360  loss  0.022165290893563047 correct 50 Time per epoch 0.2698263883590698
-        Epoch  370  loss  0.0309408364569507 correct 50 Time per epoch 0.27031357288360597
-        Epoch  380  loss  0.020421484402632823 correct 50 Time per epoch 0.27276947498321535
-        Epoch  390  loss  0.009010989167156636 correct 50 Time per epoch 0.39205996990203856
-        Epoch  400  loss  0.028062076784529932 correct 50 Time per epoch 0.2755990982055664
-        Epoch  410  loss  0.017858436228083596 correct 50 Time per epoch 0.2738886117935181
-        Epoch  420  loss  0.01595788710578505 correct 50 Time per epoch 0.27085440158843993
-        Epoch  430  loss  0.010981669314603044 correct 50 Time per epoch 0.3498138427734375
-        Epoch  440  loss  0.0073597141156594645 correct 50 Time per epoch 0.3893049478530884
-        Epoch  450  loss  0.001045879318996137 correct 50 Time per epoch 0.30714950561523435
-        Epoch  460  loss  0.028332616492490064 correct 50 Time per epoch 0.26844699382781984
-        Epoch  470  loss  0.006705242311157467 correct 50 Time per epoch 0.39022910594940186
-        Epoch  480  loss  0.05121780781112924 correct 50 Time per epoch 0.2701330423355103
-        Epoch  490  loss  0.002480405627858726 correct 50 Time per epoch 0.27403204441070556
+        Epoch  0  loss  2.0323814824257833 correct 46 Time per epoch 1.4579288244247437
+        Epoch  10  loss  0.34575115264416956 correct 49 Time per epoch 0.3570537567138672
+        Epoch  20  loss  1.102252699682478 correct 49 Time per epoch 0.2724740982055664
+        Epoch  30  loss  0.443838788253701 correct 50 Time per epoch 0.26042296886444094
+        Epoch  40  loss  0.10342929093624108 correct 50 Time per epoch 0.2583003520965576
+        Epoch  50  loss  0.9342391505405047 correct 50 Time per epoch 0.27146153450012206
+        Epoch  60  loss  1.471104926292973 correct 50 Time per epoch 0.3571170330047607
+        Epoch  70  loss  0.3598319667980328 correct 50 Time per epoch 0.2631401777267456
+        Epoch  80  loss  0.1469966358469223 correct 50 Time per epoch 0.37769064903259275
+        Epoch  90  loss  0.37804712288405734 correct 50 Time per epoch 0.3115377902984619
+        Epoch  100  loss  0.03790966254360692 correct 50 Time per epoch 0.3153393268585205
+        Epoch  110  loss  0.8547582488087573 correct 50 Time per epoch 0.25612964630126955
+        Epoch  120  loss  0.08934128960002835 correct 50 Time per epoch 0.258467698097229
+        Epoch  130  loss  0.06821811041644725 correct 50 Time per epoch 0.2587639570236206
+        Epoch  140  loss  0.04257361647084147 correct 50 Time per epoch 0.37181222438812256
+        Epoch  150  loss  0.5684944903933333 correct 50 Time per epoch 0.25813376903533936
+        Epoch  160  loss  0.3845847617564051 correct 50 Time per epoch 0.2569802522659302
+        Epoch  170  loss  0.017972094190366234 correct 50 Time per epoch 0.2622771978378296
+        Epoch  180  loss  0.35939495067711097 correct 50 Time per epoch 0.37165882587432864
+        Epoch  190  loss  0.5554534043878767 correct 50 Time per epoch 0.2573284864425659
+        Epoch  200  loss  0.12310127484553898 correct 50 Time per epoch 0.2555901050567627
+        Epoch  210  loss  0.0398237935775945 correct 50 Time per epoch 0.2555456876754761
+        Epoch  220  loss  0.010914764197801708 correct 50 Time per epoch 0.29503955841064455
+        Epoch  230  loss  0.03945617353655968 correct 50 Time per epoch 0.3365968942642212
+        Epoch  240  loss  0.08271958762773494 correct 50 Time per epoch 0.2576359510421753
+        Epoch  250  loss  0.34690382100577793 correct 50 Time per epoch 0.2565868616104126
+        Epoch  260  loss  0.011445607681785172 correct 50 Time per epoch 0.2640532493591309
+        Epoch  270  loss  0.3506395617528238 correct 50 Time per epoch 0.36884050369262694
+        Epoch  280  loss  0.08424174108383144 correct 50 Time per epoch 0.26000959873199464
+        Epoch  290  loss  0.002447075990270569 correct 50 Time per epoch 0.2545535802841187
+        Epoch  300  loss  0.0076666266775685665 correct 50 Time per epoch 0.2555701732635498
+        Epoch  310  loss  0.32062409828833444 correct 50 Time per epoch 0.3596575975418091
+        Epoch  320  loss  0.09448048493864822 correct 50 Time per epoch 0.2650566577911377
+        Epoch  330  loss  0.4060436270288088 correct 50 Time per epoch 0.2548715591430664
+        Epoch  340  loss  0.2770055559264609 correct 50 Time per epoch 0.255192494392395
+        Epoch  350  loss  0.3753169086878286 correct 50 Time per epoch 0.2688390493392944
+        Epoch  360  loss  0.07837431100481666 correct 50 Time per epoch 0.3532301664352417
+        Epoch  370  loss  0.010608165536730843 correct 50 Time per epoch 0.2562769651412964
+        Epoch  380  loss  0.26798849908942096 correct 50 Time per epoch 0.2591264247894287
+        Epoch  390  loss  0.2784278162165263 correct 50 Time per epoch 0.25400404930114745
+        Epoch  400  loss  0.0586052932419302 correct 50 Time per epoch 0.37382590770721436
+        Epoch  410  loss  0.0008723194020494614 correct 50 Time per epoch 0.2584576368331909
+        Epoch  420  loss  0.2586216320384123 correct 50 Time per epoch 0.25503220558166506
+        Epoch  430  loss  0.06051031530336377 correct 50 Time per epoch 0.2555375576019287
+        Epoch  440  loss  0.19242953567494075 correct 50 Time per epoch 0.32076098918914797
+        Epoch  450  loss  2.4822851854637323e-05 correct 50 Time per epoch 0.3047224521636963
+        Epoch  460  loss  0.010551584028711881 correct 50 Time per epoch 0.2558619499206543
+        Epoch  470  loss  0.3453719328026343 correct 50 Time per epoch 0.2549257755279541
+        Epoch  480  loss  0.06445386826421769 correct 50 Time per epoch 0.25376651287078855
+        Epoch  490  loss  0.06494521617249414 correct 50 Time per epoch 0.3757734775543213
 ```
